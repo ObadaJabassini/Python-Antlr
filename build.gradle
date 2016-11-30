@@ -22,8 +22,8 @@ apply plugin: 'me.champeau.gradle.antlr4'
 
 antlr4 {
     source = file('src/main/antlr')
-    output = file('build/generated-src/me/tomassetti/pythonast/parser')
-    extraArgs = ['-package', 'me.tomassetti.pythonast.parser']
+    output = file('build/generated-src/build')
+    extraArgs = ['-package', 'build']
 }
 
 compileJava.dependsOn antlr4
@@ -37,7 +37,7 @@ configurations {
 task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Python-Parser',
-                   'Implementation-Version': '0.0.1'
+                'Implementation-Version': '0.0.1'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

@@ -1,6 +1,5 @@
-package me.tomassetti.pythonast;
+package parser;
 
-import me.tomassetti.pythonast.parser.Python3Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -22,7 +21,7 @@ public class AstPrinter {
                 && ctx.getChildCount() == 1
                 && ctx.getChild(0) instanceof ParserRuleContext;
         if (!toBeIgnored) {
-            String ruleName = Python3Parser.ruleNames[ctx.getRuleIndex()];
+            String ruleName = build.Python3Parser.ruleNames[ctx.getRuleIndex()];
             for (int i = 0; i < indentation; i++) {
                 System.out.print("  ");
             }

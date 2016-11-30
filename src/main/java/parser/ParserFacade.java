@@ -1,7 +1,7 @@
-package me.tomassetti.pythonast;
+package parser;
 
-import me.tomassetti.pythonast.parser.Python3Lexer;
-import me.tomassetti.pythonast.parser.Python3Parser;
+import build.Python3Lexer;
+import build.Python3Parser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
