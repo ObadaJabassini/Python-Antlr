@@ -6,8 +6,8 @@ import java.io.IOException;
 public class Main
 {
     public static void main(String[] args) throws IOException {
-        ParserFacade parserFacade = new ParserFacade();
+        Parser parser = new Parser();
         AstPrinter astPrinter = new AstPrinter();
-        astPrinter.print(parserFacade.parse(new File("tests/test.py")));
+	    parser.parse(new File("tests/test.py"));
     }
 }

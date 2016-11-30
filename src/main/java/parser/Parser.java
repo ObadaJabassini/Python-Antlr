@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-public class ParserFacade {
+public class Parser {
 
     private static String readFile(File file, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(file.toPath());
