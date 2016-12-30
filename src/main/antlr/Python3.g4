@@ -114,20 +114,21 @@ decorated
  ;
 
 /// funcdef: 'def' NAME parameters ['->' test] ':' suite
+
 funcdef
- : DEF name = NAME parameters ( '->' test )? ':' suite #funcDefinition
+ : DEF NAME parameters ( '->' test )? ':' suite #funcDefinition
  ;
 
 /// parameters: '(' [typedargslist] ')'
 parameters
- : '(' typedargslist? ')'
+ : '(' (typedargslist)? ')'
  ;
 
 /// typedargslist: (tfpdef ['=' test] (',' tfpdef ['=' test])* [','
 ///                ['*' [tfpdef] (',' tfpdef ['=' test])* [',' '**' tfpdef] | '**' tfpdef]]
 ///              |  '*' [tfpdef] (',' tfpdef ['=' test])* [',' '**' tfpdef] | '**' tfpdef)
 typedargslist
- : tfpdef ( '=' test )? ( ',' tfpdef ( '=' test )? )* ( ',' ( '*' tfpdef? ( ',' tfpdef ( '=' test )? )* ( ',' '**' tfpdef )? 
+ :tfpdef ( '=' test )? ( ',' tfpdef ( '=' test )? )* ( ',' ( '*' tfpdef? ( ',' tfpdef ( '=' test )? )* ( ',' '**' tfpdef )?
                                                             | '**' tfpdef 
                                                             )? 
                                                       )?
@@ -137,7 +138,7 @@ typedargslist
 
 /// tfpdef: NAME [':' test]
 tfpdef
- : NAME ( ':' test )?
+ : NAME( ':' test )?
  ;
 
 /// varargslist: (vfpdef ['=' test] (',' vfpdef ['=' test])* [','
@@ -332,7 +333,7 @@ compound_stmt
 
 /// if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
 if_stmt
- : IF test ':' suite ( ELIF test ':' suite )* ( ELSE ':' suite )?
+ : IF test ':' suite ( ELIF test ':' suite )* ( ELSE ':' elseSuite = suite )?
  ;
 
 /// while_stmt: 'while' test ':' suite ['else' ':' suite]

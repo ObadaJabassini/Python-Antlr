@@ -5,457 +5,475 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import python.object.PythonBlock;
+import python.object.PythonFunction;
+import python.object.PythonParameters;
+import python.scope.ConditionStatement;
+import python.statement.Statement;
 
-public class Visitor implements Python3Visitor
+import java.util.HashMap;
+import java.util.Map;
+
+public class Visitor implements Python3Visitor<Statement>
 {
-	
+	private Map<String, PythonFunction> functions = new HashMap<>();
 	@Override
-	public Object visitTestlist(@NotNull Python3Parser.TestlistContext ctx) {
+	public Statement visitTestlist(@NotNull Python3Parser.TestlistContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitAssert_stmt(@NotNull Python3Parser.Assert_stmtContext ctx) {
+	public Statement visitAssert_stmt(@NotNull Python3Parser.Assert_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitNot_test(@NotNull Python3Parser.Not_testContext ctx) {
+	public Statement visitNot_test(@NotNull Python3Parser.Not_testContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitFile_input(@NotNull Python3Parser.File_inputContext ctx) {
+	public Statement visitFile_input(@NotNull Python3Parser.File_inputContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx) {
+	public Statement visitNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitXor_expr(@NotNull Python3Parser.Xor_exprContext ctx) {
+	public Statement visitXor_expr(@NotNull Python3Parser.Xor_exprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitInteger(@NotNull Python3Parser.IntegerContext ctx) {
+	public Statement visitInteger(@NotNull Python3Parser.IntegerContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitImport_from(@NotNull Python3Parser.Import_fromContext ctx) {
+	public Statement visitImport_from(@NotNull Python3Parser.Import_fromContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitSingle_input(@NotNull Python3Parser.Single_inputContext ctx) {
+	public Statement visitSingle_input(@NotNull Python3Parser.Single_inputContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDecorated(@NotNull Python3Parser.DecoratedContext ctx) {
+	public Statement visitDecorated(@NotNull Python3Parser.DecoratedContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitWith_item(@NotNull Python3Parser.With_itemContext ctx) {
+	public Statement visitWith_item(@NotNull Python3Parser.With_itemContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitRaise_stmt(@NotNull Python3Parser.Raise_stmtContext ctx) {
+	public Statement visitRaise_stmt(@NotNull Python3Parser.Raise_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitImport_as_name(@NotNull Python3Parser.Import_as_nameContext ctx) {
+	public Statement visitImport_as_name(@NotNull Python3Parser.Import_as_nameContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitExcept_clause(@NotNull Python3Parser.Except_clauseContext ctx) {
+	public Statement visitExcept_clause(@NotNull Python3Parser.Except_clauseContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitCompound_stmt(@NotNull Python3Parser.Compound_stmtContext ctx) {
+	public Statement visitCompound_stmt(@NotNull Python3Parser.Compound_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitNumber(@NotNull Python3Parser.NumberContext ctx) {
+	public Statement visitNumber(@NotNull Python3Parser.NumberContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitAnd_expr(@NotNull Python3Parser.And_exprContext ctx) {
+	public Statement visitAnd_expr(@NotNull Python3Parser.And_exprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitLambdef_nocond(@NotNull Python3Parser.Lambdef_nocondContext ctx) {
+	public Statement visitLambdef_nocond(@NotNull Python3Parser.Lambdef_nocondContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDictorsetmaker(@NotNull Python3Parser.DictorsetmakerContext ctx) {
+	public Statement visitDictorsetmaker(@NotNull Python3Parser.DictorsetmakerContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitReturn_stmt(@NotNull Python3Parser.Return_stmtContext ctx) {
+	public Statement visitReturn_stmt(@NotNull Python3Parser.Return_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDotted_name(@NotNull Python3Parser.Dotted_nameContext ctx) {
+	public Statement visitDotted_name(@NotNull Python3Parser.Dotted_nameContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitFlow_stmt(@NotNull Python3Parser.Flow_stmtContext ctx) {
+	public Statement visitFlow_stmt(@NotNull Python3Parser.Flow_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitWhile_stmt(@NotNull Python3Parser.While_stmtContext ctx) {
+	public Statement visitWhile_stmt(@NotNull Python3Parser.While_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitOr_test(@NotNull Python3Parser.Or_testContext ctx) {
+	public Statement visitOr_test(@NotNull Python3Parser.Or_testContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitComparison(@NotNull Python3Parser.ComparisonContext ctx) {
+	public Statement visitComparison(@NotNull Python3Parser.ComparisonContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTest(@NotNull Python3Parser.TestContext ctx) {
+	public Statement visitTest(@NotNull Python3Parser.TestContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitSubscript(@NotNull Python3Parser.SubscriptContext ctx) {
+	public Statement visitSubscript(@NotNull Python3Parser.SubscriptContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitComp_for(@NotNull Python3Parser.Comp_forContext ctx) {
+	public Statement visitComp_for(@NotNull Python3Parser.Comp_forContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitYield_arg(@NotNull Python3Parser.Yield_argContext ctx) {
+	public Statement visitYield_arg(@NotNull Python3Parser.Yield_argContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitYield_expr(@NotNull Python3Parser.Yield_exprContext ctx) {
+	public Statement visitYield_expr(@NotNull Python3Parser.Yield_exprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitImport_stmt(@NotNull Python3Parser.Import_stmtContext ctx) {
+	public Statement visitImport_stmt(@NotNull Python3Parser.Import_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitShift_expr(@NotNull Python3Parser.Shift_exprContext ctx) {
+	public Statement visitShift_expr(@NotNull Python3Parser.Shift_exprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitLambdef(@NotNull Python3Parser.LambdefContext ctx) {
+	public Statement visitLambdef(@NotNull Python3Parser.LambdefContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitWhatever(@NotNull Python3Parser.WhateverContext ctx) {
+	public Statement visitWhatever(@NotNull Python3Parser.WhateverContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitAnd_test(@NotNull Python3Parser.And_testContext ctx) {
+	public Statement visitAnd_test(@NotNull Python3Parser.And_testContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitGlobal_stmt(@NotNull Python3Parser.Global_stmtContext ctx) {
+	public Statement visitGlobal_stmt(@NotNull Python3Parser.Global_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitImport_as_names(@NotNull Python3Parser.Import_as_namesContext ctx) {
+	public Statement visitImport_as_names(@NotNull Python3Parser.Import_as_namesContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDecorators(@NotNull Python3Parser.DecoratorsContext ctx) {
+	public Statement visitDecorators(@NotNull Python3Parser.DecoratorsContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTry_stmt(@NotNull Python3Parser.Try_stmtContext ctx) {
+	public Statement visitTry_stmt(@NotNull Python3Parser.Try_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitComp_op(@NotNull Python3Parser.Comp_opContext ctx) {
+	public Statement visitComp_op(@NotNull Python3Parser.Comp_opContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitStar_expr(@NotNull Python3Parser.Star_exprContext ctx) {
+	public Statement visitStar_expr(@NotNull Python3Parser.Star_exprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx) {
+	public Statement visitBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx) {
+	public Statement visitArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitParameters(@NotNull Python3Parser.ParametersContext ctx) {
+	public Statement visitParameters(@NotNull Python3Parser.ParametersContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDecorator(@NotNull Python3Parser.DecoratorContext ctx) {
+	public Statement visitDecorator(@NotNull Python3Parser.DecoratorContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTfpdef(@NotNull Python3Parser.TfpdefContext ctx) {
+	public Statement visitTfpdef(@NotNull Python3Parser.TfpdefContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitString(@NotNull Python3Parser.StringContext ctx) {
+	public Statement visitString(@NotNull Python3Parser.StringContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTestlist_comp(@NotNull Python3Parser.Testlist_compContext ctx) {
+	public Statement visitTestlist_comp(@NotNull Python3Parser.Testlist_compContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitIf_stmt(@NotNull Python3Parser.If_stmtContext ctx) {
-		return null;
+	public Statement visitIf_stmt(@NotNull Python3Parser.If_stmtContext ctx) {
+		ConditionStatement condition = (ConditionStatement) visit(ctx.test(0));
+		if((Boolean) condition.run()){
+			return visit(ctx.suite(0));
+		}
+		
 	}
 	
 	@Override
-	public Object visitWith_stmt(@NotNull Python3Parser.With_stmtContext ctx) {
+	public Statement visitWith_stmt(@NotNull Python3Parser.With_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitClassdef(@NotNull Python3Parser.ClassdefContext ctx) {
+	public Statement visitClassdef(@NotNull Python3Parser.ClassdefContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitExprlist(@NotNull Python3Parser.ExprlistContext ctx) {
+	public Statement visitExprlist(@NotNull Python3Parser.ExprlistContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitSmall_stmt(@NotNull Python3Parser.Small_stmtContext ctx) {
+	public Statement visitSmall_stmt(@NotNull Python3Parser.Small_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTrailer(@NotNull Python3Parser.TrailerContext ctx) {
+	public Statement visitTrailer(@NotNull Python3Parser.TrailerContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDotted_as_names(@NotNull Python3Parser.Dotted_as_namesContext ctx) {
+	public Statement visitDotted_as_names(@NotNull Python3Parser.Dotted_as_namesContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitArith_expr(@NotNull Python3Parser.Arith_exprContext ctx) {
+	public Statement visitArith_expr(@NotNull Python3Parser.Arith_exprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitArglist(@NotNull Python3Parser.ArglistContext ctx) {
+	public Statement visitArglist(@NotNull Python3Parser.ArglistContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitSimple_stmt(@NotNull Python3Parser.Simple_stmtContext ctx) {
+	public Statement visitSimple_stmt(@NotNull Python3Parser.Simple_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTypedargslist(@NotNull Python3Parser.TypedargslistContext ctx) {
+	public Statement visitTypedargslist(@NotNull Python3Parser.TypedargslistContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitExpr(@NotNull Python3Parser.ExprContext ctx) {
+	public Statement visitExpr(@NotNull Python3Parser.ExprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTerm(@NotNull Python3Parser.TermContext ctx) {
+	public Statement visitTerm(@NotNull Python3Parser.TermContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitPower(@NotNull Python3Parser.PowerContext ctx) {
+	public Statement visitPower(@NotNull Python3Parser.PowerContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDotted_as_name(@NotNull Python3Parser.Dotted_as_nameContext ctx) {
+	public Statement visitDotted_as_name(@NotNull Python3Parser.Dotted_as_nameContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitFactor(@NotNull Python3Parser.FactorContext ctx) {
+	public Statement visitFactor(@NotNull Python3Parser.FactorContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitSliceop(@NotNull Python3Parser.SliceopContext ctx) {
+	public Statement visitSliceop(@NotNull Python3Parser.SliceopContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitFuncdef(@NotNull Python3Parser.FuncdefContext ctx) {
-		return null;
+	public Statement visitFuncdef(@NotNull Python3Parser.FuncdefContext ctx) {
+		String name = ctx.NAME().getSymbol().getText();
+		PythonBlock block = (PythonBlock) visit(ctx.suite());
+		PythonParameters parameters = (PythonParameters) visit(ctx.parameters());
+		PythonFunction function = new PythonFunction(name, block, parameters);
+		functions.put(function.getName(), function);
+		return block;
 	}
 	
 	@Override
-	public Object visitSubscriptlist(@NotNull Python3Parser.SubscriptlistContext ctx) {
+	public Statement visitSubscriptlist(@NotNull Python3Parser.SubscriptlistContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTest_nocond(@NotNull Python3Parser.Test_nocondContext ctx) {
+	public Statement visitTest_nocond(@NotNull Python3Parser.Test_nocondContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitComp_iter(@NotNull Python3Parser.Comp_iterContext ctx) {
+	public Statement visitComp_iter(@NotNull Python3Parser.Comp_iterContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitNonlocal_stmt(@NotNull Python3Parser.Nonlocal_stmtContext ctx) {
+	public Statement visitNonlocal_stmt(@NotNull Python3Parser.Nonlocal_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitEval_input(@NotNull Python3Parser.Eval_inputContext ctx) {
+	public Statement visitEval_input(@NotNull Python3Parser.Eval_inputContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitVfpdef(@NotNull Python3Parser.VfpdefContext ctx) {
+	public Statement visitVfpdef(@NotNull Python3Parser.VfpdefContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitImport_name(@NotNull Python3Parser.Import_nameContext ctx) {
+	public Statement visitImport_name(@NotNull Python3Parser.Import_nameContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitComp_if(@NotNull Python3Parser.Comp_ifContext ctx) {
+	public Statement visitComp_if(@NotNull Python3Parser.Comp_ifContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitAugassign(@NotNull Python3Parser.AugassignContext ctx) {
+	public Statement visitAugassign(@NotNull Python3Parser.AugassignContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitPass_stmt(@NotNull Python3Parser.Pass_stmtContext ctx) {
+	public Statement visitPass_stmt(@NotNull Python3Parser.Pass_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitProg(@NotNull Python3Parser.ProgContext ctx) {
+	public Statement visitProg(@NotNull Python3Parser.ProgContext ctx) {
+		ctx.stmt().forEach(this::visit);
 		return null;
 	}
 	
 	@Override
-	public Object visitYield_stmt(@NotNull Python3Parser.Yield_stmtContext ctx) {
+	public Statement visitYield_stmt(@NotNull Python3Parser.Yield_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitSuite(@NotNull Python3Parser.SuiteContext ctx) {
+	public Statement visitSuite(@NotNull Python3Parser.SuiteContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitContinue_stmt(@NotNull Python3Parser.Continue_stmtContext ctx) {
+	public Statement visitContinue_stmt(@NotNull Python3Parser.Continue_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTestlist_star_expr(@NotNull Python3Parser.Testlist_star_exprContext ctx) {
+	public Statement visitTestlist_star_expr(@NotNull Python3Parser.Testlist_star_exprContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitVarargslist(@NotNull Python3Parser.VarargslistContext ctx) {
+	public Statement visitVarargslist(@NotNull Python3Parser.VarargslistContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitFor_stmt(@NotNull Python3Parser.For_stmtContext ctx) {
+	public Statement visitFor_stmt(@NotNull Python3Parser.For_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitDel_stmt(@NotNull Python3Parser.Del_stmtContext ctx) {
+	public Statement visitDel_stmt(@NotNull Python3Parser.Del_stmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitAtom(@NotNull Python3Parser.AtomContext ctx) {
+	public Statement visitAtom(@NotNull Python3Parser.AtomContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visitStmt(@NotNull Python3Parser.StmtContext ctx) {
+	public Statement visitStmt(@NotNull Python3Parser.StmtContext ctx) {
 		return null;
 	}
 	
 	@Override
-	public Object visit(@NotNull ParseTree tree) {
+	public Statement visit(@NotNull ParseTree tree) {
 		return null;
 	}
 	
 	@Override
-	public Object visitChildren(@NotNull RuleNode node) {
+	public Statement visitChildren(@NotNull RuleNode node) {
 		return null;
 	}
 	
 	@Override
-	public Object visitTerminal(@NotNull TerminalNode node) {
+	public Statement visitTerminal(@NotNull TerminalNode node) {
 		return null;
 	}
 	
 	@Override
-	public Object visitErrorNode(@NotNull ErrorNode node) {
+	public Statement visitErrorNode(@NotNull ErrorNode node) {
 		return null;
 	}
 }
