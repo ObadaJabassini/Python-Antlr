@@ -27,4 +27,9 @@ public class PythonObject extends Statement implements PythonComparable, PythonO
 	public PythonObject apply(PythonObject second, String op) {
 		return null;
 	}
+	
+	@Override
+	public PythonObject apply(String op) {
+		return null;
+	}
 }

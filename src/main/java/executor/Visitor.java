@@ -355,7 +355,9 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitParameters(@NotNull Python3Parser.ParametersContext ctx) {
-		return null;
+		if(ctx.typedargslist().getText().equals(""))
+			return new ParametersStatement(new HashMap<>());
+		return visitTypedargslist(ctx.typedargslist());
 	}
 	
 	@Override
@@ -473,7 +475,18 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTypedargslist(@NotNull Python3Parser.TypedargslistContext ctx) {
-		return null;
+		Map<String, PythonObject> map = new HashMap<>();
+		if(!ctx.test(0).getText().equals("")){
+			map.put(ctx.tfpdef(0).NAME().getText(), visitTest(ctx.test(0)));
+		}
+		for (int i = 1; i < ctx.tfpdef().size(); i++) {
+			if(i >= ctx.test().size()){
+				map.put(ctx.tfpdef().get(i).NAME().getText(), Python.nil());
+				break;
+			}
+			map.put(ctx.tfpdef().get(i).NAME().getText(), visitTest(ctx.test(i)));
+		}
+		return new ParametersStatement(map);
 	}
 	
 	@Override
@@ -532,7 +545,15 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFactor(@NotNull Python3Parser.FactorContext ctx) {
-		return null;
+		ExpressionStatement statement = (ExpressionStatement) visitPower(ctx.power());
+		if(!ctx.op.getText().equals("")){
+			switch (ctx.op.getText()){
+				case "-":
+					statement.setMinus(true);
+					statement.setTilda(true);
+			}
+		}
+		return statement;
 	}
 	
 	@Override

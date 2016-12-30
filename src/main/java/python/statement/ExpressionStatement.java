@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ExpressionStatement extends Statement
 {
-	private boolean star = false;
+	private boolean star = false, tilda, minus;
 	private List<PythonObject> objects;
 	private List<String> operators;
 	
@@ -24,7 +24,16 @@ public class ExpressionStatement extends Statement
 	
 	@Override
 	public Object run() {
-		return null;
+		if(this.objects.size() == 1){
+			PythonObject temp = this.objects.get(0);
+			if ( minus )
+				temp = temp.apply("-");
+			if ( tilda )
+				temp = temp.apply("~");
+			return temp;
+				
+		}
+		List<PythonObject> objects = new ArrayList<>();
 	}
 	
 	public boolean isStar() {
@@ -49,5 +58,21 @@ public class ExpressionStatement extends Statement
 	
 	public void setOperators(List<String> operators) {
 		this.operators = operators;
+	}
+	
+	public boolean isTilda() {
+		return tilda;
+	}
+	
+	public void setTilda(boolean tilda) {
+		this.tilda = tilda;
+	}
+	
+	public boolean isMinus() {
+		return minus;
+	}
+	
+	public void setMinus(boolean minus) {
+		this.minus = minus;
 	}
 }
