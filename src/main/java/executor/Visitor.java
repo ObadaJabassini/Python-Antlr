@@ -5,8 +5,7 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import python.object.Python;
-import python.object.PythonFunction;
+import python.object.*;
 import python.scope.SymbolTable;
 import python.statement.*;
 
@@ -49,7 +48,24 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitXor_expr(@NotNull Python3Parser.Xor_exprContext ctx) {
-		return null;
+		if(ctx.and_expr().size() == 1)
+			return visitAnd_expr(ctx.and_expr(0));
+		List<String> ops = new ArrayList<>();
+		List<PythonObject> pythonObjects = new ArrayList<>();
+		ExpressionStatement statement = (ExpressionStatement) visitAnd_expr(ctx.and_expr(0));
+		for (int i = 0; i < statement.getOperators().size(); i++) {
+			ops.add(statement.getOperators().get(i));
+			pythonObjects.add(statement.getObjects().get(i));
+		}
+		for (int j = 0; j < ctx.and_expr().size(); j++) {
+			ops.add("^");
+			statement = (ExpressionStatement) visitAnd_expr(ctx.and_expr(j));
+			for (int i = 0; i < statement.getOperators().size(); i++) {
+				ops.add(statement.getOperators().get(i));
+				pythonObjects.add(statement.getObjects().get(i));
+			}
+		}
+		return new ExpressionStatement(pythonObjects, ops);
 	}
 	
 	@Override
@@ -123,12 +139,35 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitNumber(@NotNull Python3Parser.NumberContext ctx) {
-		return null;
+		if(!ctx.integer().getText().equals("")){
+			return new ExpressionStatement(new PythonInteger(ctx.integer().getText()));
+		}
+		if(!ctx.FLOAT_NUMBER().getText().equals("")){
+			return new ExpressionStatement(new PythonFloat(ctx.FLOAT_NUMBER().getText()));
+		}
+		return new ExpressionStatement(new PythonComplex(ctx.IMAG_NUMBER().getText()));
 	}
 	
 	@Override
 	public Statement visitAnd_expr(@NotNull Python3Parser.And_exprContext ctx) {
-		return null;
+		if(ctx.shift_expr().size() == 1)
+			return visitShift_expr(ctx.shift_expr(0));
+		List<String> ops = new ArrayList<>();
+		List<PythonObject> pythonObjects = new ArrayList<>();
+		ExpressionStatement statement = (ExpressionStatement) visitShift_expr(ctx.shift_expr(0));
+		for (int i = 0; i < statement.getOperators().size(); i++) {
+			ops.add(statement.getOperators().get(i));
+			pythonObjects.add(statement.getObjects().get(i));
+		}
+		for (int j = 0; j < ctx.shift_expr().size(); j++) {
+			ops.add("&");
+			statement = (ExpressionStatement) visitShift_expr(ctx.shift_expr(j));
+			for (int i = 0; i < statement.getOperators().size(); i++) {
+				ops.add(statement.getOperators().get(i));
+				pythonObjects.add(statement.getObjects().get(i));
+			}
+		}
+		return new ExpressionStatement(pythonObjects, ops);
 	}
 	
 	@Override
@@ -234,7 +273,24 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitShift_expr(@NotNull Python3Parser.Shift_exprContext ctx) {
-		return null;
+		if(ctx.arith_expr().size() == 1)
+			return visitArith_expr(ctx.arith_expr(0));
+		List<String> ops = new ArrayList<>();
+		List<PythonObject> pythonObjects = new ArrayList<>();
+		ExpressionStatement statement = (ExpressionStatement) visitArith_expr(ctx.arith_expr(0));
+		for (int i = 0; i < statement.getOperators().size(); i++) {
+			ops.add(statement.getOperators().get(i));
+			pythonObjects.add(statement.getObjects().get(i));
+		}
+		for (int j = 0; j < ctx.arith_expr().size(); j++) {
+			ops.add(ctx.opss.get(j).getText());
+			statement = (ExpressionStatement) visitArith_expr(ctx.arith_expr(j));
+			for (int i = 0; i < statement.getOperators().size(); i++) {
+				ops.add(statement.getOperators().get(i));
+				pythonObjects.add(statement.getObjects().get(i));
+			}
+		}
+		return new ExpressionStatement(pythonObjects, ops);
 	}
 	
 	@Override
@@ -381,7 +437,24 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitArith_expr(@NotNull Python3Parser.Arith_exprContext ctx) {
-		return null;
+		if(ctx.term().size() == 1)
+			return visitTerm(ctx.term(0));
+		List<String> ops = new ArrayList<>();
+		List<PythonObject> pythonObjects = new ArrayList<>();
+		ExpressionStatement statement = (ExpressionStatement) visitTerm(ctx.term(0));
+		for (int i = 0; i < statement.getOperators().size(); i++) {
+			ops.add(statement.getOperators().get(i));
+			pythonObjects.add(statement.getObjects().get(i));
+		}
+		for (int j = 0; j < ctx.term().size(); j++) {
+			ops.add(ctx.opss.get(j).getText());
+			statement = (ExpressionStatement) visitTerm(ctx.term(j));
+			for (int i = 0; i < statement.getOperators().size(); i++) {
+				ops.add(statement.getOperators().get(i));
+				pythonObjects.add(statement.getObjects().get(i));
+			}
+		}
+		return new ExpressionStatement(pythonObjects, ops);
 	}
 	
 	@Override
@@ -406,18 +479,50 @@ public class Visitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitExpr(@NotNull Python3Parser.ExprContext ctx) {
 		if(ctx.xor_expr().size() == 1)
-			return
-		return null;
+			return visitXor_expr(ctx.xor_expr(0));
+		List<String> ops = new ArrayList<>();
+		List<PythonObject> pythonObjects = new ArrayList<>();
+		ExpressionStatement statement = (ExpressionStatement) visitXor_expr(ctx.xor_expr(0));
+		for (int i = 0; i < statement.getOperators().size(); i++) {
+			ops.add(statement.getOperators().get(i));
+			pythonObjects.add(statement.getObjects().get(i));
+		}
+		for (int j = 0; j < ctx.xor_expr().size(); j++) {
+			ops.add("|");
+			statement = (ExpressionStatement) visitXor_expr(ctx.xor_expr(j));
+			for (int i = 0; i < statement.getOperators().size(); i++) {
+				ops.add(statement.getOperators().get(i));
+				pythonObjects.add(statement.getObjects().get(i));
+			}
+		}
+		return new ExpressionStatement(pythonObjects, ops);
 	}
 	
 	@Override
 	public Statement visitTerm(@NotNull Python3Parser.TermContext ctx) {
-		return null;
+		if(ctx.factor().size() == 1)
+			return visitFactor(ctx.factor(0));
+		List<String> ops = new ArrayList<>();
+		List<PythonObject> pythonObjects = new ArrayList<>();
+		ExpressionStatement statement = (ExpressionStatement) visitFactor(ctx.factor(0));
+		for (int i = 0; i < statement.getOperators().size(); i++) {
+			ops.add(statement.getOperators().get(i));
+			pythonObjects.add(statement.getObjects().get(i));
+		}
+		for (int j = 0; j < ctx.factor().size(); j++) {
+			ops.add(ctx.opss.get(j).getText());
+			statement = (ExpressionStatement) visitFactor(ctx.factor(j));
+			for (int i = 0; i < statement.getOperators().size(); i++) {
+				ops.add(statement.getOperators().get(i));
+				pythonObjects.add(statement.getObjects().get(i));
+			}
+		}
+		return new ExpressionStatement(pythonObjects, ops);
 	}
 	
 	@Override
 	public Statement visitPower(@NotNull Python3Parser.PowerContext ctx) {
-		return null;
+		return visitAtom(ctx.atom());
 	}
 	
 	@Override
@@ -550,7 +655,16 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitAtom(@NotNull Python3Parser.AtomContext ctx) {
-		return null;
+		if(!ctx.FALSE().getText().equals("")){
+			return new ExpressionStatement(Python.False());
+		}
+		if(!ctx.TRUE().getText().equals("")){
+			return new ExpressionStatement(Python.True());
+		}
+		if(!ctx.NAME().getText().equals("")){
+			return SymbolTable.getTable().lookup(ctx.NAME().getText());
+		}
+		return visitNumber(ctx.number());
 	}
 	
 	@Override

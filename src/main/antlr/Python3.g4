@@ -463,33 +463,33 @@ and_expr
 
 /// shift_expr: arith_expr (('<<'|'>>') arith_expr)*
 shift_expr
- : arith_expr ( '<<' arith_expr 
-              | '>>' arith_expr 
+ : arith_expr ( opss += '<<' arith_expr
+              | opss += '>>' arith_expr
               )*
  ;
 
 /// arith_expr: term (('+'|'-') term)*
 arith_expr
- : term ( '+' term
-        | '-' term 
+ : term ( opss += '+' term
+        | opss += '-' term
         )*
  ;
 
 /// term: factor (('*'|'/'|'%'|'//') factor)*
 term
- : factor ( '*' factor
-          | '/' factor
-          | '%' factor 
-          | '//' factor 
-          | '@' factor // PEP 465
+ : factor ( opss += '*' factor
+          | opss += '/' factor
+          | opss += '%' factor
+          | opss += '//' factor
+          | opss += '@' factor // PEP 465
           )*
  ;
 
 /// factor: ('+'|'-'|'~') factor | power
 factor
- : '+' factor 
- | '-' factor 
- | '~' factor 
+ : op = '+' factor
+ | op = '-' factor
+ | op = '~' factor
  | power
  ;
 
@@ -758,7 +758,7 @@ FLOAT_NUMBER
 
 /// imagnumber ::=  (floatnumber | intpart) ("j" | "J")
 IMAG_NUMBER
- : ( FLOAT_NUMBER | INT_PART ) [jJ]
+ : ( FLOAT_NUMBER  | INT_PART ) [jJ]
  ;
 
 DOT : '.';

@@ -2,6 +2,7 @@ package python.statement;
 
 import python.object.PythonObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpressionStatement extends Statement
@@ -9,6 +10,12 @@ public class ExpressionStatement extends Statement
 	private boolean star = false;
 	private List<PythonObject> objects;
 	private List<String> operators;
+	
+	public  ExpressionStatement(PythonObject object){
+		objects = new ArrayList<>();
+		objects.add(object);
+		operators = new ArrayList<>();
+	}
 	
 	public ExpressionStatement(List<PythonObject> objects, List<String> operators) {
 		this.objects = objects;

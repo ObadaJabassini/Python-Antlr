@@ -4500,6 +4500,7 @@ public class Python3Parser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+		public TerminalNode STAR() { return getToken(Python3Parser.STAR, 0); }
 		public Star_exprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4732,6 +4733,9 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Shift_exprContext extends ParserRuleContext {
+		public Token s59;
+		public List<Token> opss = new ArrayList<Token>();
+		public Token s60;
 		public List<Arith_exprContext> arith_expr() {
 			return getRuleContexts(Arith_exprContext.class);
 		}
@@ -4774,13 +4778,15 @@ public class Python3Parser extends Parser {
 				switch (_input.LA(1)) {
 				case LEFT_SHIFT:
 					{
-					setState(780); match(LEFT_SHIFT);
+					setState(780); ((Shift_exprContext)_localctx).s59 = match(LEFT_SHIFT);
+					((Shift_exprContext)_localctx).opss.add(((Shift_exprContext)_localctx).s59);
 					setState(781); arith_expr();
 					}
 					break;
 				case RIGHT_SHIFT:
 					{
-					setState(782); match(RIGHT_SHIFT);
+					setState(782); ((Shift_exprContext)_localctx).s60 = match(RIGHT_SHIFT);
+					((Shift_exprContext)_localctx).opss.add(((Shift_exprContext)_localctx).s60);
 					setState(783); arith_expr();
 					}
 					break;
@@ -4806,6 +4812,9 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Arith_exprContext extends ParserRuleContext {
+		public Token s61;
+		public List<Token> opss = new ArrayList<Token>();
+		public Token s62;
 		public List<TermContext> term() {
 			return getRuleContexts(TermContext.class);
 		}
@@ -4848,13 +4857,15 @@ public class Python3Parser extends Parser {
 				switch (_input.LA(1)) {
 				case ADD:
 					{
-					setState(790); match(ADD);
+					setState(790); ((Arith_exprContext)_localctx).s61 = match(ADD);
+					((Arith_exprContext)_localctx).opss.add(((Arith_exprContext)_localctx).s61);
 					setState(791); term();
 					}
 					break;
 				case MINUS:
 					{
-					setState(792); match(MINUS);
+					setState(792); ((Arith_exprContext)_localctx).s62 = match(MINUS);
+					((Arith_exprContext)_localctx).opss.add(((Arith_exprContext)_localctx).s62);
 					setState(793); term();
 					}
 					break;
@@ -4880,6 +4891,12 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class TermContext extends ParserRuleContext {
+		public Token s46;
+		public List<Token> opss = new ArrayList<Token>();
+		public Token s63;
+		public Token s64;
+		public Token s65;
+		public Token s76;
 		public List<FactorContext> factor() {
 			return getRuleContexts(FactorContext.class);
 		}
@@ -4922,31 +4939,36 @@ public class Python3Parser extends Parser {
 				switch (_input.LA(1)) {
 				case STAR:
 					{
-					setState(800); match(STAR);
+					setState(800); ((TermContext)_localctx).s46 = match(STAR);
+					((TermContext)_localctx).opss.add(((TermContext)_localctx).s46);
 					setState(801); factor();
 					}
 					break;
 				case DIV:
 					{
-					setState(802); match(DIV);
+					setState(802); ((TermContext)_localctx).s63 = match(DIV);
+					((TermContext)_localctx).opss.add(((TermContext)_localctx).s63);
 					setState(803); factor();
 					}
 					break;
 				case MOD:
 					{
-					setState(804); match(MOD);
+					setState(804); ((TermContext)_localctx).s64 = match(MOD);
+					((TermContext)_localctx).opss.add(((TermContext)_localctx).s64);
 					setState(805); factor();
 					}
 					break;
 				case IDIV:
 					{
-					setState(806); match(IDIV);
+					setState(806); ((TermContext)_localctx).s65 = match(IDIV);
+					((TermContext)_localctx).opss.add(((TermContext)_localctx).s65);
 					setState(807); factor();
 					}
 					break;
 				case AT:
 					{
-					setState(808); match(AT);
+					setState(808); ((TermContext)_localctx).s76 = match(AT);
+					((TermContext)_localctx).opss.add(((TermContext)_localctx).s76);
 					setState(809); factor();
 					}
 					break;
@@ -4972,6 +4994,7 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class FactorContext extends ParserRuleContext {
+		public Token op;
 		public FactorContext factor() {
 			return getRuleContext(FactorContext.class,0);
 		}
@@ -5006,21 +5029,21 @@ public class Python3Parser extends Parser {
 			case ADD:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(815); match(ADD);
+				setState(815); ((FactorContext)_localctx).op = match(ADD);
 				setState(816); factor();
 				}
 				break;
 			case MINUS:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(817); match(MINUS);
+				setState(817); ((FactorContext)_localctx).op = match(MINUS);
 				setState(818); factor();
 				}
 				break;
 			case NOT_OP:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(819); match(NOT_OP);
+				setState(819); ((FactorContext)_localctx).op = match(NOT_OP);
 				setState(820); factor();
 				}
 				break;
