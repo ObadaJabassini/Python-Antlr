@@ -22,8 +22,7 @@ apply plugin: 'me.champeau.gradle.antlr4'
 
 antlr4 {
     source = file('src/main/antlr')
-    output = file('build/generated-src/build')
-    extraArgs = ['-package', 'build']
+    output = file('src/main/java')
 }
 
 compileJava.dependsOn antlr4

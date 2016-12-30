@@ -5,17 +5,12 @@ grammar Python3;
 tokens { INDENT, DEDENT }
 
 @lexer::members {
-
-  // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
   private java.util.LinkedList<Token> tokens = new java.util.LinkedList<>();
 
-  // The stack that keeps track of the indentation level.
   private java.util.Stack<Integer> indents = new java.util.Stack<>();
 
-  // The amount of opened braces, brackets and parenthesis.
   private int opened = 0;
 
-  // The most recently produced token.
   private Token lastToken = null;
 
   @Override
@@ -26,34 +21,25 @@ tokens { INDENT, DEDENT }
 
   @Override
   public Token nextToken() {
-
-    // Check if the end-of-file is ahead and there are still some DEDENTS expected.
     if (_input.LA(1) == EOF && !this.indents.isEmpty()) {
 
-      // Remove any trailing EOF tokens from our buffer.
       for (int i = tokens.size() - 1; i >= 0; i--) {
         if (tokens.get(i).getType() == EOF) {
           tokens.remove(i);
         }
       }
-
-      // First emit an extra line break that serves as the end of the statement.
       this.emit(commonToken(Python3Parser.NEWLINE, "\n"));
 
-      // Now emit as much DEDENT tokens as needed.
       while (!indents.isEmpty()) {
         this.emit(createDedent());
         indents.pop();
       }
-
-      // Put the EOF back on the token stream.
       this.emit(commonToken(Python3Parser.EOF, "<EOF>"));
     }
 
     Token next = super.nextToken();
 
     if (next.getChannel() == Token.DEFAULT_CHANNEL) {
-      // Keep track of the last token on the default channel.
       this.lastToken = next;
     }
 
@@ -71,15 +57,6 @@ tokens { INDENT, DEDENT }
     int start = text.isEmpty() ? stop : stop - text.length() + 1;
     return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
   }
-
-  // Calculates the indentation of the provided spaces, taking the
-  // following rules into account:
-  //
-  // "Tabs are replaced (from left to right) by one to eight spaces
-  //  such that the total number of characters up to and including
-  //  the replacement is a multiple of eight [...]"
-  //
-  //  -- https://docs.python.org/3.1/reference/lexical_analysis.html#indentation
   static int getIndentationCount(String spaces) {
 
     int count = 0;
@@ -90,7 +67,6 @@ tokens { INDENT, DEDENT }
           count += 8 - (count % 8);
           break;
         default:
-          // A normal space char.
           count++;
       }
     }
@@ -102,6 +78,8 @@ tokens { INDENT, DEDENT }
     return super.getCharPositionInLine() == 0 && super.getLine() == 1;
   }
 }
+
+prog : stmt+;
 
 /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
 single_input
@@ -137,7 +115,7 @@ decorated
 
 /// funcdef: 'def' NAME parameters ['->' test] ':' suite
 funcdef
- : DEF NAME parameters ( '->' test )? ':' suite
+ : DEF name = NAME parameters ( '->' test )? ':' suite #funcDefinition
  ;
 
 /// parameters: '(' [typedargslist] ')'
@@ -181,7 +159,7 @@ vfpdef
 
 /// stmt: simple_stmt | compound_stmt
 stmt
- : simple_stmt 
+ : simple_stmt
  | compound_stmt
  ;
 
@@ -206,9 +184,7 @@ small_stmt
 /// expr_stmt: testlist_star_expr (augassign (yield_expr|testlist) |
 ///                      ('=' (yield_expr|testlist_star_expr))*)
 expr_stmt
- : testlist_star_expr ( augassign ( yield_expr | testlist) 
-                      | ( '=' ( yield_expr| testlist_star_expr ) )*
-                      )
+ : testlist_star_expr ( augassign ( yield_expr | testlist)  | ( '=' ( yield_expr| testlist_star_expr ) )* ) #normalAssign
  ;           
 
 /// testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']
@@ -344,14 +320,14 @@ assert_stmt
 
 /// compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
 compound_stmt
- : if_stmt 
- | while_stmt 
- | for_stmt 
- | try_stmt 
- | with_stmt 
- | funcdef 
- | classdef 
- | decorated
+ : if_stmt   #ifStatement
+ | while_stmt #whileStatement
+ | for_stmt #forStatement
+ | try_stmt #tryStatement
+ | with_stmt #withStatement
+ | funcdef #functionDefinition
+ | classdef #classDefinition
+ | decorated #decoratedStatement
  ;
 
 /// if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -608,8 +584,8 @@ arglist
 /// # results in an ambiguity. ast.c makes sure it's a NAME.
 /// argument: test [comp_for] | test '=' test  # Really [keyword '='] test
 argument
- : test comp_for? 
- | test '=' test
+ : test comp_for? #whatever
+ | test '=' test #argumentAssign
  ;
 
 /// comp_iter: comp_for | comp_if
@@ -832,7 +808,7 @@ RIGHT_SHIFT_ASSIGN : '>>=';
 POWER_ASSIGN : '**=';
 IDIV_ASSIGN : '//=';
 
-SKIP
+WWW
  : ( SPACES | COMMENT | LINE_JOINING ) -> skip
  ;
 

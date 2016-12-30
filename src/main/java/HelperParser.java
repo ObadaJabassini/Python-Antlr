@@ -1,7 +1,5 @@
-package parser;
-
-import build.Python3Lexer;
-import build.Python3Parser;
+import executor.Python3Lexer;
+import executor.Python3Parser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -10,7 +8,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-public class Parser {
+public class HelperParser {
 
     private static String readFile(File file, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(file.toPath());
@@ -24,7 +22,6 @@ public class Parser {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
         Python3Parser parser = new Python3Parser(tokens);
-
         return parser.file_input();
     }
 }
