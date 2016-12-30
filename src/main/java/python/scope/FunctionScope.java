@@ -61,4 +61,9 @@ public class FunctionScope extends Scope
 			return null;
 		return parent.get(name);
 	}
+	
+	@Override
+	public void remove(String name) {
+		locals.remove(name);
+	}
 }

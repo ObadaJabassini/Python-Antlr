@@ -1,12 +1,15 @@
 package python.object;
 
+import python.statement.ParametersStatement;
+import python.statement.StatementBlock;
+
 public class PythonFunction extends PythonObject
 {
 	protected String name;
-	protected PythonBlock body;
-	protected PythonParameters parameters;
+	protected StatementBlock body;
+	protected ParametersStatement parameters;
 	
-	public PythonFunction(String name, PythonBlock body, PythonParameters parameters) {
+	public PythonFunction(String name, StatementBlock body, ParametersStatement parameters) {
 		this.name = name;
 		this.body = body;
 		this.parameters = parameters;
@@ -24,19 +27,19 @@ public class PythonFunction extends PythonObject
 		this.name = name;
 	}
 	
-	public PythonBlock getBody() {
+	public StatementBlock getBody() {
 		return body;
 	}
 	
-	public void setBody(PythonBlock body) {
+	public void setBody(StatementBlock body) {
 		this.body = body;
 	}
 	
-	public PythonParameters getParameters() {
+	public ParametersStatement getParameters() {
 		return parameters;
 	}
 	
-	public void setParameters(PythonParameters parameters) {
+	public void setParameters(ParametersStatement parameters) {
 		this.parameters = parameters;
 	}
 }

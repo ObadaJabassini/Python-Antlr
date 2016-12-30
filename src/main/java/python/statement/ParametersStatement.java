@@ -1,14 +1,14 @@
-package python.object;
+package python.statement;
 
+import python.object.PythonObject;
 import python.scope.SymbolTable;
-import python.statement.Statement;
 
 import java.util.Map;
 
-public class PythonParameters extends Statement
+public class ParametersStatement extends Statement
 {
 	protected Map<String, PythonObject> params;
-	public PythonParameters(Map<String, PythonObject> params){
+	public ParametersStatement(Map<String, PythonObject> params){
 		this.params = params;
 	}
 	@Override

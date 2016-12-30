@@ -30,6 +30,17 @@ public interface Python3Listener extends ParseTreeListener {
 	void exitAssert_stmt(@NotNull Python3Parser.Assert_stmtContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Python3Parser#argument}.
+	 * @param ctx the parse tree
+	 */
+	void enterArgument(@NotNull Python3Parser.ArgumentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Python3Parser#argument}.
+	 * @param ctx the parse tree
+	 */
+	void exitArgument(@NotNull Python3Parser.ArgumentContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Python3Parser#not_test}.
 	 * @param ctx the parse tree
 	 */
@@ -50,17 +61,6 @@ public interface Python3Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFile_input(@NotNull Python3Parser.File_inputContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link Python3Parser#normalAssign}.
-	 * @param ctx the parse tree
-	 */
-	void enterNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Python3Parser#normalAssign}.
-	 * @param ctx the parse tree
-	 */
-	void exitNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#xor_expr}.
@@ -371,17 +371,6 @@ public interface Python3Listener extends ParseTreeListener {
 	void exitLambdef(@NotNull Python3Parser.LambdefContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Python3Parser#whatever}.
-	 * @param ctx the parse tree
-	 */
-	void enterWhatever(@NotNull Python3Parser.WhateverContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Python3Parser#whatever}.
-	 * @param ctx the parse tree
-	 */
-	void exitWhatever(@NotNull Python3Parser.WhateverContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Python3Parser#and_test}.
 	 * @param ctx the parse tree
 	 */
@@ -468,17 +457,6 @@ public interface Python3Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link Python3Parser#argumentAssign}.
-	 * @param ctx the parse tree
-	 */
-	void enterArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Python3Parser#argumentAssign}.
-	 * @param ctx the parse tree
-	 */
-	void exitArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#parameters}.
@@ -842,6 +820,17 @@ public interface Python3Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPass_stmt(@NotNull Python3Parser.Pass_stmtContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Python3Parser#expr_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Python3Parser#expr_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#prog}.

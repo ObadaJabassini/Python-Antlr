@@ -42,6 +42,19 @@ public class Python3BaseListener implements Python3Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterArgument(@NotNull Python3Parser.ArgumentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArgument(@NotNull Python3Parser.ArgumentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterNot_test(@NotNull Python3Parser.Not_testContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -62,19 +75,6 @@ public class Python3BaseListener implements Python3Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFile_input(@NotNull Python3Parser.File_inputContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -445,19 +445,6 @@ public class Python3BaseListener implements Python3Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterWhatever(@NotNull Python3Parser.WhateverContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitWhatever(@NotNull Python3Parser.WhateverContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAnd_test(@NotNull Python3Parser.And_testContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -556,19 +543,6 @@ public class Python3BaseListener implements Python3Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -998,6 +972,19 @@ public class Python3BaseListener implements Python3Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPass_stmt(@NotNull Python3Parser.Pass_stmtContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

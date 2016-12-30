@@ -116,7 +116,7 @@ decorated
 /// funcdef: 'def' NAME parameters ['->' test] ':' suite
 
 funcdef
- : DEF NAME parameters ( '->' test )? ':' suite #funcDefinition
+ : DEF NAME parameters ( '->' test )? ':' suite
  ;
 
 /// parameters: '(' [typedargslist] ')'
@@ -185,7 +185,7 @@ small_stmt
 /// expr_stmt: testlist_star_expr (augassign (yield_expr|testlist) |
 ///                      ('=' (yield_expr|testlist_star_expr))*)
 expr_stmt
- : testlist_star_expr ( augassign ( yield_expr | testlist)  | ( '=' ( yield_expr| testlist_star_expr ) )* ) #normalAssign
+ : testlist_star_expr ( augassign ( yield_expr | testlist)  | ( '=' ( yield_expr| testlist_star_expr ) )* )
  ;           
 
 /// testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']
@@ -321,19 +321,19 @@ assert_stmt
 
 /// compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
 compound_stmt
- : if_stmt   #ifStatement
- | while_stmt #whileStatement
- | for_stmt #forStatement
- | try_stmt #tryStatement
- | with_stmt #withStatement
- | funcdef #functionDefinition
- | classdef #classDefinition
- | decorated #decoratedStatement
+ : if_stmt
+ | while_stmt
+ | for_stmt
+ | try_stmt
+ | with_stmt
+ | funcdef
+ | classdef
+ | decorated
  ;
 
 /// if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
 if_stmt
- : IF test ':' suite ( ELIF test ':' suite )* ( ELSE ':' elseSuite = suite )?
+ : IF test ':' suite ( ELIF elifTest += test ':' elifSuite += suite )* ( ELSE ':' elseSuite = suite )?
  ;
 
 /// while_stmt: 'while' test ':' suite ['else' ':' suite]
@@ -443,7 +443,7 @@ comp_op
 
 /// star_expr: ['*'] expr
 star_expr
- : '*'? expr
+ : STAR? expr
  ;
 
 /// expr: xor_expr ('|' xor_expr)*
@@ -585,8 +585,8 @@ arglist
 /// # results in an ambiguity. ast.c makes sure it's a NAME.
 /// argument: test [comp_for] | test '=' test  # Really [keyword '='] test
 argument
- : test comp_for? #whatever
- | test '=' test #argumentAssign
+ : test comp_for?
+ | test '=' test
  ;
 
 /// comp_iter: comp_for | comp_if

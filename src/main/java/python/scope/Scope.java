@@ -29,4 +29,6 @@ public abstract class Scope
 	}
 	
 	public abstract PythonObject get(String name);
+	
+	public abstract void remove(String name);
 }

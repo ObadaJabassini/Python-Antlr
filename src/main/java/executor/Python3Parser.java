@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class Python3Parser extends Parser {
@@ -1604,17 +1605,6 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Expr_stmtContext extends ParserRuleContext {
-		public Expr_stmtContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_expr_stmt; }
-	 
-		public Expr_stmtContext() { }
-		public void copyFrom(Expr_stmtContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class NormalAssignContext extends Expr_stmtContext {
 		public List<Testlist_star_exprContext> testlist_star_expr() {
 			return getRuleContexts(Testlist_star_exprContext.class);
 		}
@@ -1633,18 +1623,21 @@ public class Python3Parser extends Parser {
 		public TestlistContext testlist() {
 			return getRuleContext(TestlistContext.class,0);
 		}
-		public NormalAssignContext(Expr_stmtContext ctx) { copyFrom(ctx); }
+		public Expr_stmtContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_expr_stmt; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).enterNormalAssign(this);
+			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).enterExpr_stmt(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).exitNormalAssign(this);
+			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).exitExpr_stmt(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Python3Visitor ) return ((Python3Visitor<? extends T>)visitor).visitNormalAssign(this);
+			if ( visitor instanceof Python3Visitor ) return ((Python3Visitor<? extends T>)visitor).visitExpr_stmt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1654,7 +1647,6 @@ public class Python3Parser extends Parser {
 		enterRule(_localctx, 32, RULE_expr_stmt);
 		int _la;
 		try {
-			_localctx = new NormalAssignContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(405); testlist_star_expr();
@@ -3171,6 +3163,11 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class If_stmtContext extends ParserRuleContext {
+		public TestContext test;
+		public List<TestContext> elifTest = new ArrayList<TestContext>();
+		public SuiteContext suite;
+		public List<SuiteContext> elifSuite = new ArrayList<SuiteContext>();
+		public SuiteContext elseSuite;
 		public List<TerminalNode> ELIF() { return getTokens(Python3Parser.ELIF); }
 		public TerminalNode ELSE() { return getToken(Python3Parser.ELSE, 0); }
 		public TerminalNode IF() { return getToken(Python3Parser.IF, 0); }
@@ -3226,9 +3223,11 @@ public class Python3Parser extends Parser {
 				{
 				{
 				setState(578); match(ELIF);
-				setState(579); test();
+				setState(579); ((If_stmtContext)_localctx).test = test();
+				((If_stmtContext)_localctx).elifTest.add(((If_stmtContext)_localctx).test);
 				setState(580); match(COLON);
-				setState(581); suite();
+				setState(581); ((If_stmtContext)_localctx).suite = suite();
+				((If_stmtContext)_localctx).elifSuite.add(((If_stmtContext)_localctx).suite);
 				}
 				}
 				setState(587);
@@ -3241,7 +3240,7 @@ public class Python3Parser extends Parser {
 				{
 				setState(588); match(ELSE);
 				setState(589); match(COLON);
-				setState(590); suite();
+				setState(590); ((If_stmtContext)_localctx).elseSuite = suite();
 				}
 			}
 
@@ -6199,57 +6198,30 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class ArgumentContext extends ParserRuleContext {
-		public ArgumentContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_argument; }
-	 
-		public ArgumentContext() { }
-		public void copyFrom(ArgumentContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class ArgumentAssignContext extends ArgumentContext {
 		public List<TestContext> test() {
 			return getRuleContexts(TestContext.class);
-		}
-		public TestContext test(int i) {
-			return getRuleContext(TestContext.class,i);
-		}
-		public ArgumentAssignContext(ArgumentContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).enterArgumentAssign(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).exitArgumentAssign(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Python3Visitor ) return ((Python3Visitor<? extends T>)visitor).visitArgumentAssign(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class WhateverContext extends ArgumentContext {
-		public TestContext test() {
-			return getRuleContext(TestContext.class,0);
 		}
 		public Comp_forContext comp_for() {
 			return getRuleContext(Comp_forContext.class,0);
 		}
-		public WhateverContext(ArgumentContext ctx) { copyFrom(ctx); }
+		public TestContext test(int i) {
+			return getRuleContext(TestContext.class,i);
+		}
+		public ArgumentContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_argument; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).enterWhatever(this);
+			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).enterArgument(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).exitWhatever(this);
+			if ( listener instanceof Python3Listener ) ((Python3Listener)listener).exitArgument(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Python3Visitor ) return ((Python3Visitor<? extends T>)visitor).visitWhatever(this);
+			if ( visitor instanceof Python3Visitor ) return ((Python3Visitor<? extends T>)visitor).visitArgument(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -6262,7 +6234,6 @@ public class Python3Parser extends Parser {
 			setState(1026);
 			switch ( getInterpreter().adaptivePredict(_input,144,_ctx) ) {
 			case 1:
-				_localctx = new WhateverContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(1018); test();
@@ -6278,7 +6249,6 @@ public class Python3Parser extends Parser {
 				break;
 
 			case 2:
-				_localctx = new ArgumentAssignContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(1022); test();

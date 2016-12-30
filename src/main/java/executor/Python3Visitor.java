@@ -25,6 +25,13 @@ public interface Python3Visitor<T> extends ParseTreeVisitor<T> {
 	T visitAssert_stmt(@NotNull Python3Parser.Assert_stmtContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link Python3Parser#argument}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArgument(@NotNull Python3Parser.ArgumentContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link Python3Parser#not_test}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -37,13 +44,6 @@ public interface Python3Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFile_input(@NotNull Python3Parser.File_inputContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link Python3Parser#normalAssign}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#xor_expr}.
@@ -242,13 +242,6 @@ public interface Python3Visitor<T> extends ParseTreeVisitor<T> {
 	T visitLambdef(@NotNull Python3Parser.LambdefContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link Python3Parser #whatever}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitWhatever(@NotNull Python3Parser.WhateverContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link Python3Parser#and_test}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -303,13 +296,6 @@ public interface Python3Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link Python3Parser#argumentAssign}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#parameters}.
@@ -541,6 +527,13 @@ public interface Python3Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPass_stmt(@NotNull Python3Parser.Pass_stmtContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link Python3Parser#expr_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#prog}.

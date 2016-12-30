@@ -13,4 +13,9 @@ public class ClassScope extends Scope
 	public PythonObject get(String name) {
 		return null;
 	}
+	
+	@Override
+	public void remove(String name) {
+		
+	}
 }

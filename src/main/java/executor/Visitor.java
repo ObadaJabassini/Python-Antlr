@@ -5,13 +5,14 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import python.object.PythonBlock;
+import python.object.Python;
 import python.object.PythonFunction;
-import python.object.PythonParameters;
-import python.scope.ConditionStatement;
-import python.statement.Statement;
+import python.scope.SymbolTable;
+import python.statement.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Visitor implements Python3Visitor<Statement>
@@ -28,17 +29,21 @@ public class Visitor implements Python3Visitor<Statement>
 	}
 	
 	@Override
-	public Statement visitNot_test(@NotNull Python3Parser.Not_testContext ctx) {
+	public Statement visitArgument(@NotNull Python3Parser.ArgumentContext ctx) {
 		return null;
+	}
+	
+	@Override
+	public Statement visitNot_test(@NotNull Python3Parser.Not_testContext ctx) {
+		if(ctx.NOT().getText().equals(""))
+			return visitComparison(ctx.comparison());
+		ComparisonStatement statement = (ComparisonStatement) visitNot_test(ctx.not_test());
+		statement.setNot(true);
+		return statement;
 	}
 	
 	@Override
 	public Statement visitFile_input(@NotNull Python3Parser.File_inputContext ctx) {
-		return null;
-	}
-	
-	@Override
-	public Statement visitNormalAssign(@NotNull Python3Parser.NormalAssignContext ctx) {
 		return null;
 	}
 	
@@ -89,6 +94,30 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitCompound_stmt(@NotNull Python3Parser.Compound_stmtContext ctx) {
+		if(!ctx.if_stmt().getText().equals("")){
+			return visitIf_stmt(ctx.if_stmt());
+		}
+		if(!ctx.while_stmt().getText().equals("")){
+			return visitWhile_stmt(ctx.while_stmt());
+		}
+		if(!ctx.for_stmt().getText().equals("")){
+			return visitFor_stmt(ctx.for_stmt());
+		}
+		if(!ctx.try_stmt().getText().equals("")){
+			return visitTry_stmt(ctx.try_stmt());
+		}
+		if(!ctx.classdef().getText().equals("")){
+			return visitClassdef(ctx.classdef());
+		}
+		if(!ctx.funcdef().getText().equals("")){
+			return visitFuncdef(ctx.funcdef());
+		}
+		if(!ctx.with_stmt().getText().equals("")){
+			return visitWith_stmt(ctx.with_stmt());
+		}
+		if(!ctx.decorated().getText().equals("")){
+			return visitDecorated(ctx.decorated());
+		}
 		return null;
 	}
 	
@@ -129,22 +158,53 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitWhile_stmt(@NotNull Python3Parser.While_stmtContext ctx) {
+		TestStatement conditionStatement = (TestStatement) visitTest(ctx.test());
+		StatementBlock statementBlock = (StatementBlock) visitSuite(ctx.suite(0));
+		new WhileStatement(conditionStatement, statementBlock).run();
 		return null;
 	}
 	
 	@Override
 	public Statement visitOr_test(@NotNull Python3Parser.Or_testContext ctx) {
-		return null;
+		if(ctx.OR().size() == 0){
+			return visitAnd_test(ctx.and_test(0));
+		}
+		List<String> ops = new ArrayList<>();
+		List<ComparisonStatement> statements = new ArrayList<>();
+		TestStatement testStatement = (TestStatement) visitAnd_test(ctx.and_test(0));
+		for (int i = 0; i < testStatement.getStatements().size(); i++) {
+			statements.add(testStatement.getStatements().get(i));
+			ops.add(testStatement.getOperators().get(i));
+		}
+		ops.add("||");
+		for (int i = 0; i < ctx.OR().size(); i++) {
+			testStatement = (TestStatement) visitAnd_test(ctx.and_test(i));
+			for (int j = 0; j < testStatement.getStatements().size(); j++) {
+				statements.add(testStatement.getStatements().get(j));
+				ops.add(testStatement.getOperators().get(j));
+			}
+			ops.add("||");
+		}
+		return new TestStatement(ops, statements);
 	}
 	
 	@Override
 	public Statement visitComparison(@NotNull Python3Parser.ComparisonContext ctx) {
-		return null;
+		if(ctx.comp_op().size() == 0)
+			return new ComparisonStatement(new ArrayList<String>(){{add("");}}, new ArrayList<ExpressionStatement>(){{add((ExpressionStatement) visitStar_expr(ctx.star_expr(0)));}});
+		List<String> ops = new ArrayList<>();
+		List<ExpressionStatement> statements = new ArrayList<>();
+		statements.add((ExpressionStatement) visitStar_expr(ctx.star_expr(0)));
+		for (int i = 0; i < ctx.comp_op().size(); i++) {
+			ops.add(ctx.comp_op(i).getText());
+			statements.add((ExpressionStatement) visitStar_expr(ctx.star_expr(i + 1)));
+		}
+		return new ComparisonStatement(ops, statements);
 	}
 	
 	@Override
 	public Statement visitTest(@NotNull Python3Parser.TestContext ctx) {
-		return null;
+		return visitOr_test(ctx.or_test(0));
 	}
 	
 	@Override
@@ -183,18 +243,25 @@ public class Visitor implements Python3Visitor<Statement>
 	}
 	
 	@Override
-	public Statement visitWhatever(@NotNull Python3Parser.WhateverContext ctx) {
-		return null;
-	}
-	
-	@Override
 	public Statement visitAnd_test(@NotNull Python3Parser.And_testContext ctx) {
-		return null;
+		if(ctx.AND().size() == 0)
+			return visit(ctx.not_test(0));
+		List<String> ops = new ArrayList<>();
+		List<ComparisonStatement> statements = new ArrayList<>();
+		statements.add((ComparisonStatement) visitNot_test(ctx.not_test(0)));
+		for (int i = 0; i < ctx.AND().size(); i++) {
+			ops.add("&&");
+			statements.add((ComparisonStatement) visitNot_test(ctx.not_test(i + 1)));
+		}
+		return new TestStatement(ops, statements);
 	}
 	
 	@Override
 	public Statement visitGlobal_stmt(@NotNull Python3Parser.Global_stmtContext ctx) {
-		return null;
+		for (int i = 0; i < ctx.NAME().size(); i++) {
+			SymbolTable.getTable().toGlobal(ctx.NAME(i).getText());
+		}
+		return Python.nil();
 	}
 	
 	@Override
@@ -214,21 +281,19 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitComp_op(@NotNull Python3Parser.Comp_opContext ctx) {
-		return null;
+		return Python.nil();
 	}
 	
 	@Override
 	public Statement visitStar_expr(@NotNull Python3Parser.Star_exprContext ctx) {
-		return null;
+		ExpressionStatement expressionStatement = (ExpressionStatement) visitExpr(ctx.expr());
+		if(!ctx.STAR().getText().equals(""))
+			expressionStatement.setStar(true);
+		return expressionStatement;
 	}
 	
 	@Override
 	public Statement visitBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx) {
-		return null;
-	}
-	
-	@Override
-	public Statement visitArgumentAssign(@NotNull Python3Parser.ArgumentAssignContext ctx) {
 		return null;
 	}
 	
@@ -259,11 +324,26 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitIf_stmt(@NotNull Python3Parser.If_stmtContext ctx) {
-		ConditionStatement condition = (ConditionStatement) visit(ctx.test(0));
+		TestStatement condition = (TestStatement) visitTest(ctx.test(0));
 		if((Boolean) condition.run()){
 			return visit(ctx.suite(0));
 		}
-		
+		if(ctx.elifSuite.size() > 0){
+			for (int i = 0; i < ctx.elifTest.size(); i++) {
+				TestStatement statement = (TestStatement) visitTest(ctx.elifTest.get(i));
+				if((Boolean) statement.run()){
+					Statement statement1 = visitSuite(ctx.elifSuite.get(i));
+					statement1.run();
+					return statement1;
+				}
+			}
+		}
+		if(!ctx.ELSE().getText().equals("")){
+			Statement stat = visitSuite(ctx.elseSuite);
+			stat.run();
+			return stat;
+		}
+		return Python.nil();
 	}
 	
 	@Override
@@ -283,6 +363,9 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSmall_stmt(@NotNull Python3Parser.Small_stmtContext ctx) {
+		if(!ctx.global_stmt().getText().equals("")){
+			return visitGlobal_stmt(ctx.global_stmt());
+		}
 		return null;
 	}
 	
@@ -308,7 +391,11 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSimple_stmt(@NotNull Python3Parser.Simple_stmtContext ctx) {
-		return null;
+		List<Statement> statements = new ArrayList<>();
+		for (int i = 0; i < ctx.small_stmt().size(); i++) {
+			statements.add(visitSmall_stmt(ctx.small_stmt(i)));
+		}
+		return new StatementBlock(statements);
 	}
 	
 	@Override
@@ -318,6 +405,8 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitExpr(@NotNull Python3Parser.ExprContext ctx) {
+		if(ctx.xor_expr().size() == 1)
+			return
 		return null;
 	}
 	
@@ -349,8 +438,8 @@ public class Visitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitFuncdef(@NotNull Python3Parser.FuncdefContext ctx) {
 		String name = ctx.NAME().getSymbol().getText();
-		PythonBlock block = (PythonBlock) visit(ctx.suite());
-		PythonParameters parameters = (PythonParameters) visit(ctx.parameters());
+		StatementBlock block = (StatementBlock) visitSuite(ctx.suite());
+		ParametersStatement parameters = (ParametersStatement) visit(ctx.parameters());
 		PythonFunction function = new PythonFunction(name, block, parameters);
 		functions.put(function.getName(), function);
 		return block;
@@ -407,6 +496,11 @@ public class Visitor implements Python3Visitor<Statement>
 	}
 	
 	@Override
+	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
+		return null;
+	}
+	
+	@Override
 	public Statement visitProg(@NotNull Python3Parser.ProgContext ctx) {
 		ctx.stmt().forEach(this::visit);
 		return null;
@@ -419,7 +513,11 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSuite(@NotNull Python3Parser.SuiteContext ctx) {
-		return null;
+		List<Statement> statements = new ArrayList<>();
+		for(Python3Parser.StmtContext context :ctx.stmt()){
+			statements.add(visitStmt(context));
+		}
+		return new StatementBlock(statements);
 	}
 	
 	@Override
@@ -439,12 +537,15 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFor_stmt(@NotNull Python3Parser.For_stmtContext ctx) {
+		
 		return null;
 	}
 	
 	@Override
 	public Statement visitDel_stmt(@NotNull Python3Parser.Del_stmtContext ctx) {
-		return null;
+		ExpressionStatement expressionStatement = (ExpressionStatement) visitExprlist(ctx.exprlist());
+		SymbolTable.getTable().removeVariable((String)expressionStatement.run());
+		return Python.nil();
 	}
 	
 	@Override
@@ -454,7 +555,12 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitStmt(@NotNull Python3Parser.StmtContext ctx) {
-		return null;
+		Statement statement;
+		if(ctx.compound_stmt().getText().equals(""))
+			statement = visit(ctx.simple_stmt());
+		else
+			statement = visit(ctx.compound_stmt());
+		return statement;
 	}
 	
 	@Override
