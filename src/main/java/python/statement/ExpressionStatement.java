@@ -1,78 +1,13 @@
 package python.statement;
 
-import python.object.PythonObject;
-
-import java.util.ArrayList;
-import java.util.List;
+import python.object.ExpressionTree;
 
 public class ExpressionStatement extends Statement
 {
-	private boolean star = false, tilda, minus;
-	private List<PythonObject> objects;
-	private List<String> operators;
-	
-	public  ExpressionStatement(PythonObject object){
-		objects = new ArrayList<>();
-		objects.add(object);
-		operators = new ArrayList<>();
-	}
-	
-	public ExpressionStatement(List<PythonObject> objects, List<String> operators) {
-		this.objects = objects;
-		this.operators = operators;
-	}
-	
+	private ExpressionTree tree;
 	@Override
 	public Object run() {
-		if(this.objects.size() == 1){
-			PythonObject temp = this.objects.get(0);
-			if ( minus )
-				temp = temp.apply("-");
-			if ( tilda )
-				temp = temp.apply("~");
-			return temp;
-				
-		}
-		List<PythonObject> objects = new ArrayList<>();
+		return tree.evaluate();
 	}
 	
-	public boolean isStar() {
-		return star;
-	}
-	
-	public void setStar(boolean star) {
-		this.star = star;
-	}
-	
-	public List<PythonObject> getObjects() {
-		return objects;
-	}
-	
-	public void setObjects(List<PythonObject> objects) {
-		this.objects = objects;
-	}
-	
-	public List<String> getOperators() {
-		return operators;
-	}
-	
-	public void setOperators(List<String> operators) {
-		this.operators = operators;
-	}
-	
-	public boolean isTilda() {
-		return tilda;
-	}
-	
-	public void setTilda(boolean tilda) {
-		this.tilda = tilda;
-	}
-	
-	public boolean isMinus() {
-		return minus;
-	}
-	
-	public void setMinus(boolean minus) {
-		this.minus = minus;
-	}
 }

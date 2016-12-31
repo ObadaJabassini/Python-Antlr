@@ -13,13 +13,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Visitor implements Python3Visitor<Statement>
 {
 	private Map<String, PythonFunction> functions = new HashMap<>();
+	
 	@Override
 	public Statement visitTestlist(@NotNull Python3Parser.TestlistContext ctx) {
-		return null;
+		List<ExpressionTree> trees = new ArrayList<>();
+		for (int i = 0; i < ctx.test().size(); i++) {
+			trees.add((ExpressionTree) visitTest(ctx.test(i)));
+		}
+		return new TestListStatement(trees);
 	}
 	
 	@Override
@@ -34,11 +40,16 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitNot_test(@NotNull Python3Parser.Not_testContext ctx) {
-		if(ctx.NOT().getText().equals(""))
-			return visitComparison(ctx.comparison());
-		ComparisonStatement statement = (ComparisonStatement) visitNot_test(ctx.not_test());
-		statement.setNot(true);
-		return statement;
+		if ( ctx.NOT().getText().equals("") ) {
+			BooleanTree tree = new BooleanTree(null);
+			BooleanTree.Node node = new BooleanTree.Node();
+			node.statement = (ComparisonStatement) visitComparison(ctx.comparison());
+			tree.setRoot(node);
+			return tree;
+		}
+		BooleanTree tree = (BooleanTree) visitNot_test(ctx.not_test());
+		tree.getRoot().statement.flipNot();
+		return tree;
 	}
 	
 	@Override
@@ -48,24 +59,11 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitXor_expr(@NotNull Python3Parser.Xor_exprContext ctx) {
-		if(ctx.and_expr().size() == 1)
-			return visitAnd_expr(ctx.and_expr(0));
-		List<String> ops = new ArrayList<>();
-		List<PythonObject> pythonObjects = new ArrayList<>();
-		ExpressionStatement statement = (ExpressionStatement) visitAnd_expr(ctx.and_expr(0));
-		for (int i = 0; i < statement.getOperators().size(); i++) {
-			ops.add(statement.getOperators().get(i));
-			pythonObjects.add(statement.getObjects().get(i));
+		ExpressionTree tree = new ExpressionTree("^");
+		for (int i = 0; i < ctx.and_expr().size(); i++) {
+			tree.addChild((ExpressionTree) visitAnd_expr(ctx.and_expr(i)));
 		}
-		for (int j = 0; j < ctx.and_expr().size(); j++) {
-			ops.add("^");
-			statement = (ExpressionStatement) visitAnd_expr(ctx.and_expr(j));
-			for (int i = 0; i < statement.getOperators().size(); i++) {
-				ops.add(statement.getOperators().get(i));
-				pythonObjects.add(statement.getObjects().get(i));
-			}
-		}
-		return new ExpressionStatement(pythonObjects, ops);
+		return tree;
 	}
 	
 	@Override
@@ -95,7 +93,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitRaise_stmt(@NotNull Python3Parser.Raise_stmtContext ctx) {
-		return null;
+		return new PythonReturn(new TestListStatement(new ArrayList<>()));
 	}
 	
 	@Override
@@ -110,28 +108,28 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitCompound_stmt(@NotNull Python3Parser.Compound_stmtContext ctx) {
-		if(!ctx.if_stmt().getText().equals("")){
+		if ( !ctx.if_stmt().getText().equals("") ) {
 			return visitIf_stmt(ctx.if_stmt());
 		}
-		if(!ctx.while_stmt().getText().equals("")){
+		if ( !ctx.while_stmt().getText().equals("") ) {
 			return visitWhile_stmt(ctx.while_stmt());
 		}
-		if(!ctx.for_stmt().getText().equals("")){
+		if ( !ctx.for_stmt().getText().equals("") ) {
 			return visitFor_stmt(ctx.for_stmt());
 		}
-		if(!ctx.try_stmt().getText().equals("")){
+		if ( !ctx.try_stmt().getText().equals("") ) {
 			return visitTry_stmt(ctx.try_stmt());
 		}
-		if(!ctx.classdef().getText().equals("")){
+		if ( !ctx.classdef().getText().equals("") ) {
 			return visitClassdef(ctx.classdef());
 		}
-		if(!ctx.funcdef().getText().equals("")){
+		if ( !ctx.funcdef().getText().equals("") ) {
 			return visitFuncdef(ctx.funcdef());
 		}
-		if(!ctx.with_stmt().getText().equals("")){
+		if ( !ctx.with_stmt().getText().equals("") ) {
 			return visitWith_stmt(ctx.with_stmt());
 		}
-		if(!ctx.decorated().getText().equals("")){
+		if ( !ctx.decorated().getText().equals("") ) {
 			return visitDecorated(ctx.decorated());
 		}
 		return null;
@@ -139,35 +137,28 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitNumber(@NotNull Python3Parser.NumberContext ctx) {
-		if(!ctx.integer().getText().equals("")){
-			return new ExpressionStatement(new PythonInteger(ctx.integer().getText()));
+		ExpressionTree tree = new ExpressionTree(null);
+		ExpressionTree.Node node = new ExpressionTree.Node();
+		if ( !ctx.integer().getText().equals("") ) {
+			node.object = new PythonInteger(ctx.integer().getText());
 		}
-		if(!ctx.FLOAT_NUMBER().getText().equals("")){
-			return new ExpressionStatement(new PythonFloat(ctx.FLOAT_NUMBER().getText()));
+		if ( !ctx.FLOAT_NUMBER().getText().equals("") ) {
+			node.object = new PythonFloat(ctx.FLOAT_NUMBER().getText());
 		}
-		return new ExpressionStatement(new PythonComplex(ctx.IMAG_NUMBER().getText()));
+		else {
+			node.object = new PythonComplex(ctx.IMAG_NUMBER().getText());
+		}
+		tree.setRoot(node);
+		return tree;
 	}
 	
 	@Override
 	public Statement visitAnd_expr(@NotNull Python3Parser.And_exprContext ctx) {
-		if(ctx.shift_expr().size() == 1)
-			return visitShift_expr(ctx.shift_expr(0));
-		List<String> ops = new ArrayList<>();
-		List<PythonObject> pythonObjects = new ArrayList<>();
-		ExpressionStatement statement = (ExpressionStatement) visitShift_expr(ctx.shift_expr(0));
-		for (int i = 0; i < statement.getOperators().size(); i++) {
-			ops.add(statement.getOperators().get(i));
-			pythonObjects.add(statement.getObjects().get(i));
+		ExpressionTree tree = new ExpressionTree("&");
+		for (int i = 0; i < ctx.shift_expr().size(); i++) {
+			tree.addChild((ExpressionTree) visitShift_expr(ctx.shift_expr(i)));
 		}
-		for (int j = 0; j < ctx.shift_expr().size(); j++) {
-			ops.add("&");
-			statement = (ExpressionStatement) visitShift_expr(ctx.shift_expr(j));
-			for (int i = 0; i < statement.getOperators().size(); i++) {
-				ops.add(statement.getOperators().get(i));
-				pythonObjects.add(statement.getObjects().get(i));
-			}
-		}
-		return new ExpressionStatement(pythonObjects, ops);
+		return tree;
 	}
 	
 	@Override
@@ -182,7 +173,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitReturn_stmt(@NotNull Python3Parser.Return_stmtContext ctx) {
-		return null;
+		return new PythonReturn((TestListStatement)visitTestlist(ctx.testlist()));
 	}
 	
 	@Override
@@ -192,6 +183,21 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFlow_stmt(@NotNull Python3Parser.Flow_stmtContext ctx) {
+		if(!ctx.break_stmt().getText().equals("")){
+			return visitBreak_stmt(ctx.break_stmt());
+		}
+		if(!ctx.continue_stmt().getText().equals("")){
+			return visitContinue_stmt(ctx.continue_stmt());
+		}
+		if(!ctx.return_stmt().getText().equals("")){
+			return visitReturn_stmt(ctx.return_stmt());
+		}
+		if(!ctx.raise_stmt().getText().equals("")){
+			return visitRaise_stmt(ctx.raise_stmt());
+		}
+		if(!ctx.yield_stmt().getText().equals("")){
+			return visitYield_stmt(ctx.yield_stmt());
+		}
 		return null;
 	}
 	
@@ -199,38 +205,32 @@ public class Visitor implements Python3Visitor<Statement>
 	public Statement visitWhile_stmt(@NotNull Python3Parser.While_stmtContext ctx) {
 		TestStatement conditionStatement = (TestStatement) visitTest(ctx.test());
 		StatementBlock statementBlock = (StatementBlock) visitSuite(ctx.suite(0));
-		new WhileStatement(conditionStatement, statementBlock).run();
-		return null;
+		return new WhileStatement(conditionStatement, statementBlock);
 	}
 	
 	@Override
 	public Statement visitOr_test(@NotNull Python3Parser.Or_testContext ctx) {
-		if(ctx.OR().size() == 0){
+		if ( ctx.OR().size() == 0 ) {
 			return visitAnd_test(ctx.and_test(0));
 		}
-		List<String> ops = new ArrayList<>();
-		List<ComparisonStatement> statements = new ArrayList<>();
-		TestStatement testStatement = (TestStatement) visitAnd_test(ctx.and_test(0));
-		for (int i = 0; i < testStatement.getStatements().size(); i++) {
-			statements.add(testStatement.getStatements().get(i));
-			ops.add(testStatement.getOperators().get(i));
-		}
-		ops.add("||");
+		BooleanTree tree = new BooleanTree("||");
 		for (int i = 0; i < ctx.OR().size(); i++) {
-			testStatement = (TestStatement) visitAnd_test(ctx.and_test(i));
-			for (int j = 0; j < testStatement.getStatements().size(); j++) {
-				statements.add(testStatement.getStatements().get(j));
-				ops.add(testStatement.getOperators().get(j));
-			}
-			ops.add("||");
+			tree.addChild((BooleanTree) visitAnd_test(ctx.and_test(i)));
 		}
-		return new TestStatement(ops, statements);
+		return tree;
 	}
 	
 	@Override
 	public Statement visitComparison(@NotNull Python3Parser.ComparisonContext ctx) {
-		if(ctx.comp_op().size() == 0)
-			return new ComparisonStatement(new ArrayList<String>(){{add("");}}, new ArrayList<ExpressionStatement>(){{add((ExpressionStatement) visitStar_expr(ctx.star_expr(0)));}});
+		if ( ctx.comp_op().size() == 0 ) {
+			return new ComparisonStatement(new ArrayList<String>()
+			{{
+				add("");
+			}}, new ArrayList<ExpressionStatement>()
+			{{
+				add((ExpressionStatement) visitStar_expr(ctx.star_expr(0)));
+			}});
+		}
 		List<String> ops = new ArrayList<>();
 		List<ExpressionStatement> statements = new ArrayList<>();
 		statements.add((ExpressionStatement) visitStar_expr(ctx.star_expr(0)));
@@ -248,7 +248,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSubscript(@NotNull Python3Parser.SubscriptContext ctx) {
-		return null;
+		return visitTest(ctx.test(0));
 	}
 	
 	@Override
@@ -273,24 +273,17 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitShift_expr(@NotNull Python3Parser.Shift_exprContext ctx) {
-		if(ctx.arith_expr().size() == 1)
+		if ( ctx.arith_expr().size() == 1 ) {
 			return visitArith_expr(ctx.arith_expr(0));
-		List<String> ops = new ArrayList<>();
-		List<PythonObject> pythonObjects = new ArrayList<>();
-		ExpressionStatement statement = (ExpressionStatement) visitArith_expr(ctx.arith_expr(0));
-		for (int i = 0; i < statement.getOperators().size(); i++) {
-			ops.add(statement.getOperators().get(i));
-			pythonObjects.add(statement.getObjects().get(i));
 		}
-		for (int j = 0; j < ctx.arith_expr().size(); j++) {
-			ops.add(ctx.opss.get(j).getText());
-			statement = (ExpressionStatement) visitArith_expr(ctx.arith_expr(j));
-			for (int i = 0; i < statement.getOperators().size(); i++) {
-				ops.add(statement.getOperators().get(i));
-				pythonObjects.add(statement.getObjects().get(i));
-			}
+		ExpressionTree tree = new ExpressionTree(ctx.opss.get(0).getText());
+		tree.addChild((ExpressionTree) visitArith_expr(ctx.arith_expr(0)));
+		for (int i = 1; i < ctx.opss.size(); i++) {
+			ExpressionTree tree1 = new ExpressionTree(ctx.opss.get(i).getText());
+			tree1.addChild((ExpressionTree) visitArith_expr(ctx.arith_expr(i + 1)));
+			tree.addChild(tree1);
 		}
-		return new ExpressionStatement(pythonObjects, ops);
+		return tree;
 	}
 	
 	@Override
@@ -300,24 +293,23 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitAnd_test(@NotNull Python3Parser.And_testContext ctx) {
-		if(ctx.AND().size() == 0)
-			return visit(ctx.not_test(0));
-		List<String> ops = new ArrayList<>();
-		List<ComparisonStatement> statements = new ArrayList<>();
-		statements.add((ComparisonStatement) visitNot_test(ctx.not_test(0)));
-		for (int i = 0; i < ctx.AND().size(); i++) {
-			ops.add("&&");
-			statements.add((ComparisonStatement) visitNot_test(ctx.not_test(i + 1)));
+		if ( ctx.AND().size() == 0 ) {
+			return visitNot_test(ctx.not_test(0));
 		}
-		return new TestStatement(ops, statements);
+		BooleanTree tree = new BooleanTree("&&");
+		for (int i = 0; i < ctx.AND().size(); i++) {
+			tree.addChild((BooleanTree) visitNot_test(ctx.not_test(i)));
+		}
+		return tree;
 	}
 	
 	@Override
 	public Statement visitGlobal_stmt(@NotNull Python3Parser.Global_stmtContext ctx) {
+		List<String> vars = new ArrayList<>();
 		for (int i = 0; i < ctx.NAME().size(); i++) {
-			SymbolTable.getTable().toGlobal(ctx.NAME(i).getText());
+			vars.add(ctx.NAME(i).getText());
 		}
-		return Python.nil();
+		return new GlobalStatement(vars);
 	}
 	
 	@Override
@@ -332,31 +324,29 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTry_stmt(@NotNull Python3Parser.Try_stmtContext ctx) {
-		return null;
+		return new TryStatement((StatementBlock) visitSuite(ctx.suite(0)), (StatementBlock) visitSuite(ctx.suite(1)));
 	}
 	
 	@Override
 	public Statement visitComp_op(@NotNull Python3Parser.Comp_opContext ctx) {
-		return Python.nil();
+		return PythonObject.nil();
 	}
 	
 	@Override
 	public Statement visitStar_expr(@NotNull Python3Parser.Star_exprContext ctx) {
-		ExpressionStatement expressionStatement = (ExpressionStatement) visitExpr(ctx.expr());
-		if(!ctx.STAR().getText().equals(""))
-			expressionStatement.setStar(true);
-		return expressionStatement;
+		return visitExpr(ctx.expr());
 	}
 	
 	@Override
 	public Statement visitBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx) {
-		return null;
+		return new BreakStatement();
 	}
 	
 	@Override
 	public Statement visitParameters(@NotNull Python3Parser.ParametersContext ctx) {
-		if(ctx.typedargslist().getText().equals(""))
+		if ( ctx.typedargslist().getText().equals("") ) {
 			return new ParametersStatement(new HashMap<>());
+		}
 		return visitTypedargslist(ctx.typedargslist());
 	}
 	
@@ -372,7 +362,11 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitString(@NotNull Python3Parser.StringContext ctx) {
-		return null;
+		ExpressionTree tree = new ExpressionTree(null);
+		ExpressionTree.Node node = new ExpressionTree.Node();
+		node.object = new PythonString(ctx.STRING_LITERAL().getText());
+		tree.setRoot(node);
+		return tree;
 	}
 	
 	@Override
@@ -382,26 +376,17 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitIf_stmt(@NotNull Python3Parser.If_stmtContext ctx) {
-		TestStatement condition = (TestStatement) visitTest(ctx.test(0));
-		if((Boolean) condition.run()){
-			return visit(ctx.suite(0));
+		List<TestStatement> testStatements = new ArrayList<>();
+		List<StatementBlock> blocks = new ArrayList<>();
+		for (int i = 0; i < ctx.elifTest.size(); i++) {
+			testStatements.add((TestStatement) visitTest(ctx.elifTest.get(i)));
+			blocks.add((StatementBlock) visitSuite(ctx.suite(i + 1)));
 		}
-		if(ctx.elifSuite.size() > 0){
-			for (int i = 0; i < ctx.elifTest.size(); i++) {
-				TestStatement statement = (TestStatement) visitTest(ctx.elifTest.get(i));
-				if((Boolean) statement.run()){
-					Statement statement1 = visitSuite(ctx.elifSuite.get(i));
-					statement1.run();
-					return statement1;
-				}
-			}
+		StatementBlock b = null;
+		if ( !ctx.ELSE().getText().equals("") ) {
+			b = (StatementBlock) visitSuite(ctx.elseSuite);
 		}
-		if(!ctx.ELSE().getText().equals("")){
-			Statement stat = visitSuite(ctx.elseSuite);
-			stat.run();
-			return stat;
-		}
-		return Python.nil();
+		return new IfStatement((TestStatement) visitTest(ctx.test(0)), (StatementBlock) visitSuite(ctx.suite(0)), b, testStatements, blocks);
 	}
 	
 	@Override
@@ -421,7 +406,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSmall_stmt(@NotNull Python3Parser.Small_stmtContext ctx) {
-		if(!ctx.global_stmt().getText().equals("")){
+		if ( !ctx.global_stmt().getText().equals("") ) {
 			return visitGlobal_stmt(ctx.global_stmt());
 		}
 		return null;
@@ -439,24 +424,17 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitArith_expr(@NotNull Python3Parser.Arith_exprContext ctx) {
-		if(ctx.term().size() == 1)
+		if ( ctx.term().size() == 1 ) {
 			return visitTerm(ctx.term(0));
-		List<String> ops = new ArrayList<>();
-		List<PythonObject> pythonObjects = new ArrayList<>();
-		ExpressionStatement statement = (ExpressionStatement) visitTerm(ctx.term(0));
-		for (int i = 0; i < statement.getOperators().size(); i++) {
-			ops.add(statement.getOperators().get(i));
-			pythonObjects.add(statement.getObjects().get(i));
 		}
-		for (int j = 0; j < ctx.term().size(); j++) {
-			ops.add(ctx.opss.get(j).getText());
-			statement = (ExpressionStatement) visitTerm(ctx.term(j));
-			for (int i = 0; i < statement.getOperators().size(); i++) {
-				ops.add(statement.getOperators().get(i));
-				pythonObjects.add(statement.getObjects().get(i));
-			}
+		ExpressionTree tree = new ExpressionTree(ctx.opss.get(0).getText());
+		tree.addChild((ExpressionTree) visitTerm(ctx.term(0)));
+		for (int i = 1; i < ctx.opss.size(); i++) {
+			ExpressionTree tree1 = new ExpressionTree(ctx.opss.get(i).getText());
+			tree1.addChild((ExpressionTree) visitTerm(ctx.term(i + 1)));
+			tree.addChild(tree1);
 		}
-		return new ExpressionStatement(pythonObjects, ops);
+		return tree;
 	}
 	
 	@Override
@@ -475,62 +453,42 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTypedargslist(@NotNull Python3Parser.TypedargslistContext ctx) {
-		Map<String, PythonObject> map = new HashMap<>();
-		if(!ctx.test(0).getText().equals("")){
-			map.put(ctx.tfpdef(0).NAME().getText(), visitTest(ctx.test(0)));
+		Map<String, ExpressionTree> map = new HashMap<>();
+		if ( !ctx.test(0).getText().equals("") ) {
+			map.put(ctx.tfpdef(0).NAME().getText(), (ExpressionTree) visitTest(ctx.test(0)));
 		}
 		for (int i = 1; i < ctx.tfpdef().size(); i++) {
-			if(i >= ctx.test().size()){
-				map.put(ctx.tfpdef().get(i).NAME().getText(), Python.nil());
+			if ( i >= ctx.test().size() ) {
+				map.put(ctx.tfpdef().get(i).NAME().getText(), new ExpressionTree(null));
 				break;
 			}
-			map.put(ctx.tfpdef().get(i).NAME().getText(), visitTest(ctx.test(i)));
+			map.put(ctx.tfpdef().get(i).NAME().getText(), (ExpressionTree) visitTest(ctx.test(i)));
 		}
 		return new ParametersStatement(map);
 	}
 	
 	@Override
 	public Statement visitExpr(@NotNull Python3Parser.ExprContext ctx) {
-		if(ctx.xor_expr().size() == 1)
-			return visitXor_expr(ctx.xor_expr(0));
-		List<String> ops = new ArrayList<>();
-		List<PythonObject> pythonObjects = new ArrayList<>();
-		ExpressionStatement statement = (ExpressionStatement) visitXor_expr(ctx.xor_expr(0));
-		for (int i = 0; i < statement.getOperators().size(); i++) {
-			ops.add(statement.getOperators().get(i));
-			pythonObjects.add(statement.getObjects().get(i));
+		ExpressionTree tree = new ExpressionTree("|");
+		for (int i = 0; i < ctx.xor_expr().size(); i++) {
+			tree.addChild((ExpressionTree) visitXor_expr(ctx.xor_expr(i)));
 		}
-		for (int j = 0; j < ctx.xor_expr().size(); j++) {
-			ops.add("|");
-			statement = (ExpressionStatement) visitXor_expr(ctx.xor_expr(j));
-			for (int i = 0; i < statement.getOperators().size(); i++) {
-				ops.add(statement.getOperators().get(i));
-				pythonObjects.add(statement.getObjects().get(i));
-			}
-		}
-		return new ExpressionStatement(pythonObjects, ops);
+		return tree;
 	}
 	
 	@Override
 	public Statement visitTerm(@NotNull Python3Parser.TermContext ctx) {
-		if(ctx.factor().size() == 1)
+		if ( ctx.factor().size() == 1 ) {
 			return visitFactor(ctx.factor(0));
-		List<String> ops = new ArrayList<>();
-		List<PythonObject> pythonObjects = new ArrayList<>();
-		ExpressionStatement statement = (ExpressionStatement) visitFactor(ctx.factor(0));
-		for (int i = 0; i < statement.getOperators().size(); i++) {
-			ops.add(statement.getOperators().get(i));
-			pythonObjects.add(statement.getObjects().get(i));
 		}
-		for (int j = 0; j < ctx.factor().size(); j++) {
-			ops.add(ctx.opss.get(j).getText());
-			statement = (ExpressionStatement) visitFactor(ctx.factor(j));
-			for (int i = 0; i < statement.getOperators().size(); i++) {
-				ops.add(statement.getOperators().get(i));
-				pythonObjects.add(statement.getObjects().get(i));
-			}
+		ExpressionTree tree = new ExpressionTree(ctx.opss.get(0).getText());
+		tree.addChild((ExpressionTree) visitFactor(ctx.factor(0)));
+		for (int i = 1; i < ctx.opss.size(); i++) {
+			ExpressionTree tree1 = new ExpressionTree(ctx.opss.get(i).getText());
+			tree1.addChild((ExpressionTree) visitFactor(ctx.factor(i + 1)));
+			tree.addChild(tree1);
 		}
-		return new ExpressionStatement(pythonObjects, ops);
+		return tree;
 	}
 	
 	@Override
@@ -545,15 +503,12 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFactor(@NotNull Python3Parser.FactorContext ctx) {
-		ExpressionStatement statement = (ExpressionStatement) visitPower(ctx.power());
-		if(!ctx.op.getText().equals("")){
-			switch (ctx.op.getText()){
-				case "-":
-					statement.setMinus(true);
-					statement.setTilda(true);
-			}
+		if ( !ctx.power().getText().equals("") ) {
+			return visitPower(ctx.power());
 		}
-		return statement;
+		ExpressionTree tree = (ExpressionTree) visitFactor(ctx.factor());
+		tree.setSpeical(ctx.op.getText());
+		return tree;
 	}
 	
 	@Override
@@ -628,8 +583,8 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitProg(@NotNull Python3Parser.ProgContext ctx) {
-		ctx.stmt().forEach(this::visit);
-		return null;
+		StatementBlock block = new StatementBlock(ctx.stmt().stream().map(this::visitStmt).collect(Collectors.toList()));
+		return block;
 	}
 	
 	@Override
@@ -640,7 +595,7 @@ public class Visitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitSuite(@NotNull Python3Parser.SuiteContext ctx) {
 		List<Statement> statements = new ArrayList<>();
-		for(Python3Parser.StmtContext context :ctx.stmt()){
+		for (Python3Parser.StmtContext context : ctx.stmt()) {
 			statements.add(visitStmt(context));
 		}
 		return new StatementBlock(statements);
@@ -648,7 +603,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitContinue_stmt(@NotNull Python3Parser.Continue_stmtContext ctx) {
-		return null;
+		return new ContinueStatement();
 	}
 	
 	@Override
@@ -669,32 +624,47 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitDel_stmt(@NotNull Python3Parser.Del_stmtContext ctx) {
-		ExpressionStatement expressionStatement = (ExpressionStatement) visitExprlist(ctx.exprlist());
-		SymbolTable.getTable().removeVariable((String)expressionStatement.run());
-		return Python.nil();
+		ExpressionTree tree = (ExpressionTree) visitExprlist(ctx.exprlist());
+		return new DeleteStatement(tree);
 	}
 	
 	@Override
 	public Statement visitAtom(@NotNull Python3Parser.AtomContext ctx) {
-		if(!ctx.FALSE().getText().equals("")){
-			return new ExpressionStatement(Python.False());
+		if ( !ctx.FALSE().getText().equals("") ) {
+			ExpressionTree tree = new ExpressionTree(null);
+			ExpressionTree.Node node = new ExpressionTree.Node();
+			node.object = new PythonBoolean(false);
+			tree.setRoot(node);
+			return tree;
 		}
-		if(!ctx.TRUE().getText().equals("")){
-			return new ExpressionStatement(Python.True());
+		if ( !ctx.TRUE().getText().equals("") ) {
+			ExpressionTree tree = new ExpressionTree(null);
+			ExpressionTree.Node node = new ExpressionTree.Node();
+			node.object = new PythonBoolean(true);
+			tree.setRoot(node);
+			return tree;
 		}
-		if(!ctx.NAME().getText().equals("")){
+		if ( !ctx.NONE().getText().equals("") ) {
+			return null;
+		}
+		if ( !ctx.NAME().getText().equals("") ) {
 			return SymbolTable.getTable().lookup(ctx.NAME().getText());
 		}
-		return visitNumber(ctx.number());
+		if ( !ctx.number().getText().equals("") ) {
+			return visitNumber(ctx.number());
+		}
+		return visitString(ctx.string(0));
 	}
 	
 	@Override
 	public Statement visitStmt(@NotNull Python3Parser.StmtContext ctx) {
 		Statement statement;
-		if(ctx.compound_stmt().getText().equals(""))
+		if ( ctx.compound_stmt().getText().equals("") ) {
 			statement = visit(ctx.simple_stmt());
-		else
+		}
+		else {
 			statement = visit(ctx.compound_stmt());
+		}
 		return statement;
 	}
 	

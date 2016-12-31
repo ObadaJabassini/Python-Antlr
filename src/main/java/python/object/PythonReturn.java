@@ -1,16 +1,17 @@
 package python.object;
 
 import python.statement.Statement;
+import python.statement.TestListStatement;
 
 public class PythonReturn extends Statement
 {
-	private PythonExpression expression;
-	public PythonReturn(PythonExpression expression){
-		this.expression = expression;
-	}
+	private TestListStatement statement;
 	
+	public PythonReturn(TestListStatement statement){
+		this.statement = statement;
+	}
 	@Override
 	public Object run() {
-		return expression.run();
+		return statement.run();
 	}
 }

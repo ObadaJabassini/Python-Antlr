@@ -1,5 +1,6 @@
 package python.statement;
 
+import python.object.PythonBoolean;
 import python.object.PythonComparable;
 import python.object.PythonObject;
 
@@ -19,11 +20,11 @@ public class ComparisonStatement extends Statement
 	@Override
 	public Object run() {
 		for (int i = 0; i < ops.size(); i++) {
-			if(!((PythonComparable)statements.get(i).run()).compareTo((PythonObject) statements.get(i + 1).run(), ops.get(i))){
-				return false;
+			if(!((PythonComparable)statements.get(i).run()).compareTo((PythonObject) statements.get(i + 1).run(), ops.get(i)).getValue()){
+				return new PythonBoolean(false);
 			}
 		}
-		return true;
+		return new PythonBoolean(true);
 	}
 	
 	public List<String> getOps() {
@@ -48,5 +49,9 @@ public class ComparisonStatement extends Statement
 	
 	public boolean getNot(){
 		return not;
+	}
+	
+	public void flipNot() {
+		this.not = !this.not;
 	}
 }

@@ -173,19 +173,20 @@ public class PythonInteger extends PythonObject implements PythonNumber
 				return new PythonBoolean(false);
 				break;
 			case "~":
-				return new PythonInteger(~((int)(this.getValue())))
+				return new PythonInteger(~((int)(this.getValue())));
 				break;
 			case "-":
-				return new PythonInteger(-((int)(this.getValue())))
+				return new PythonInteger(-((int)(this.getValue())));
 				break;
 			case "+":
-				return new PythonInteger((int)(this.getValue()))
+				return new PythonInteger((int)(this.getValue()));
 				break;
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
 	}
 
+	@Override
 	public PythonBoolean compareTo(PythonObject second, String op)
 	{
 		switch (op)
