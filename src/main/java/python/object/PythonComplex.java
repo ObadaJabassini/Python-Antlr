@@ -1,7 +1,5 @@
 package python.object;
 
-import python.object.PythonBoolean;
-
 import python.error.ExceptionManager;
 import python.error.UnsupportedException;
 
@@ -84,6 +82,21 @@ public class PythonComplex extends python.object.PythonNumber
                 return second;
             case "or":
                 return new PythonComplex(getValue(), getImgValue());
+	
+	        case "==":
+		        if(second instanceof PythonComplex)
+		        {
+			        PythonComplex number = (PythonComplex) second;
+			        return new PythonBoolean(number.getValue() == getValue() && number.getImgValue() == getImgValue());
+		        }
+		        return new PythonBoolean(false);
+	        case "!=":
+		        if(second instanceof PythonComplex)
+		        {
+			        PythonComplex number = (PythonComplex) second;
+			        return new PythonBoolean(number.getValue() != getValue() || number.getImgValue() != getImgValue());
+		        }
+		        return new PythonBoolean(true);
         }
         ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
         return null;
@@ -102,6 +115,7 @@ public class PythonComplex extends python.object.PythonNumber
                 return new PythonComplex(-this.getValue(), -getImgValue());
             case "+":
                 return new PythonComplex(this.getValue(), getImgValue());
+                
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
@@ -109,23 +123,6 @@ public class PythonComplex extends python.object.PythonNumber
 
     public PythonBoolean compareTo(python.object.PythonObject second, String op)
     {
-        switch (op)
-        {
-            case "==":
-                if(second instanceof PythonComplex)
-                {
-                    PythonComplex number = (PythonComplex) second;
-                    return new PythonBoolean(number.getValue() == getValue() && number.getImgValue() == getImgValue());
-                }
-                return new PythonBoolean(false);
-            case "!=":
-                if(second instanceof PythonComplex)
-                {
-                    PythonComplex number = (PythonComplex) second;
-                    return new PythonBoolean(number.getValue() != getValue() || number.getImgValue() != getImgValue());
-                }
-                return new PythonBoolean(true);
-        }
         ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
         return null;
     }

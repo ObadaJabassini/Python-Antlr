@@ -1,6 +1,5 @@
 package python.statement;
 
-import python.object.PythonBoolean;
 import python.object.PythonObject;
 
 import java.util.List;
@@ -24,10 +23,10 @@ public class ComparisonStatement extends Statement
 	public Object run() {
 		if(trees.size() == 1)
 			return ((PythonObject)trees.get(0).run()).apply(not?"!":"");
-		PythonBoolean pythonBoolean = (PythonBoolean) ((PythonObject)trees.get(0).run()).apply((PythonObject)trees.get(1).run(), ops.get(0));
+		PythonObject object = ((PythonObject)trees.get(0).run()).apply((PythonObject)trees.get(1).run(), ops.get(0));
 		for (int i = 1; i < ops.size(); i++) {
-			pythonBoolean = (PythonBoolean) pythonBoolean.apply((PythonObject) trees.get(i + 1).run(), ops.get(i));
+			object = object.apply((PythonObject) trees.get(i + 1).run(), ops.get(i));
 		}
-		return pythonBoolean.apply(not?"!":"");
+		return object.apply(not?"!":"");
 	}
 }

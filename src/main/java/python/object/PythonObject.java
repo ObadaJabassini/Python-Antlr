@@ -4,7 +4,7 @@ import python.statement.Statement;
 
 import java.util.Objects;
 
-public class PythonObject extends Statement implements PythonComparable, python.object.PythonOperation
+public class PythonObject extends Statement implements python.object.PythonOperation
 {
 	public Class<? extends PythonObject> clz = getClass();
 	
@@ -18,11 +18,6 @@ public class PythonObject extends Statement implements PythonComparable, python.
 		return Objects.hash(clz);
 	}
 	
-	@Override
-	public PythonBoolean compareTo(PythonObject second, String op) {
-		
-		return new PythonBoolean(false);
-	}
 	
 	@Override
 	public PythonObject apply(PythonObject second, String op) {

@@ -60,11 +60,11 @@ public class PythonVisitor implements Python3Visitor<Statement>
 			BooleanTree.Node node = new BooleanTree.Node();
 			node.statement = (ComparisonStatement) visitComparison(ctx.comparison());
 			tree.setRoot(node);
-			return tree;
+			return new TestStatement(tree);
 		}
-		BooleanTree tree = (BooleanTree) visitNot_test(ctx.not_test());
-		tree.getRoot().statement.flipNot();
-		return tree;
+		TestStatement testStatement = (TestStatement) visitNot_test(ctx.not_test());
+		testStatement.getTree().getRoot().statement.flipNot();
+		return testStatement;
 	}
 	
 	@Override
@@ -232,7 +232,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		for (int i = 0; i < ctx.OR().size(); i++) {
 			tree.addChild((BooleanTree) visitAnd_test(ctx.and_test(i)));
 		}
-		return tree;
+		return new TestStatement(tree);
 	}
 	
 	@Override
@@ -311,7 +311,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		for (int i = 0; i < ctx.AND().size(); i++) {
 			tree.addChild((BooleanTree) visitNot_test(ctx.not_test(i)));
 		}
-		return tree;
+		return new TestStatement(tree);
 	}
 	
 	@Override

@@ -157,6 +157,37 @@ public class PythonBoolean extends python.object.PythonObject
                     return new PythonBoolean(getValue() || bool.getValue());
                 }
                 return new PythonBoolean(getValue());
+	
+	        case "==":
+		        if(!(second instanceof python.object.PythonComplex))
+			        if(second instanceof python.object.PythonNumber )
+				        return new PythonBoolean((getValue()?1:0) == ((python.object.PythonNumber) second).getValue());
+		        return new PythonBoolean(false);
+	        case "!=":
+		        if(!(second instanceof python.object.PythonComplex))
+			        if(second instanceof python.object.PythonNumber )
+				        return new PythonBoolean((getValue()?1:0) != ((python.object.PythonNumber) second).getValue());
+		        return new PythonBoolean(true);
+	        case ">":
+		        if(!(second instanceof python.object.PythonComplex))
+			        if(second instanceof python.object.PythonNumber )
+				        return new PythonBoolean((getValue()?1:0) > ((python.object.PythonNumber) second).getValue());
+		        return new PythonBoolean(false);
+	        case "<":
+		        if(!(second instanceof python.object.PythonComplex))
+			        if(second instanceof python.object.PythonNumber )
+				        return new PythonBoolean((getValue()?1:0) < ((python.object.PythonNumber) second).getValue());
+		        return new PythonBoolean(false);
+	        case ">=":
+		        if(!(second instanceof python.object.PythonComplex))
+			        if(second instanceof python.object.PythonNumber )
+				        return new PythonBoolean((getValue()?1:0) >= ((python.object.PythonNumber) second).getValue());
+		        return new PythonBoolean(false);
+	        case "<=":
+		        if(!(second instanceof python.object.PythonComplex))
+			        if(second instanceof python.object.PythonNumber )
+				        return new PythonBoolean((getValue()?1:0) <= ((python.object.PythonNumber) second).getValue());
+		        return new PythonBoolean(false);
         }
         ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
         return null;
@@ -181,72 +212,4 @@ public class PythonBoolean extends python.object.PythonObject
         return null;
     }
 
-    public PythonBoolean compareTo(python.object.PythonObject second, String op)
-    {
-        switch (op)
-        {
-            case "==":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(new python.object.PythonInteger(bool.getValue()?1:0), "==");
-                }
-                if(!(second instanceof python.object.PythonComplex))
-                    if(second instanceof python.object.PythonNumber )
-                        return new PythonBoolean((getValue()?1:0) == ((python.object.PythonNumber) second).getValue());
-                return new PythonBoolean(false);
-            case "!=":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(new python.object.PythonInteger(bool.getValue()?1:0), "!=");
-                }
-                if(!(second instanceof python.object.PythonComplex))
-                    if(second instanceof python.object.PythonNumber )
-                        return new PythonBoolean((getValue()?1:0) != ((python.object.PythonNumber) second).getValue());
-                return new PythonBoolean(true);
-            case ">":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(new python.object.PythonInteger(bool.getValue()?1:0), ">");
-                }
-                if(!(second instanceof python.object.PythonComplex))
-                    if(second instanceof python.object.PythonNumber )
-                        return new PythonBoolean((getValue()?1:0) > ((python.object.PythonNumber) second).getValue());
-                return new PythonBoolean(false);
-            case "<":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(new python.object.PythonInteger(bool.getValue()?1:0), "<");
-                }
-                if(!(second instanceof python.object.PythonComplex))
-                    if(second instanceof python.object.PythonNumber )
-                        return new PythonBoolean((getValue()?1:0) < ((python.object.PythonNumber) second).getValue());
-                return new PythonBoolean(false);
-            case ">=":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(new python.object.PythonInteger(bool.getValue()?1:0), ">=");
-                }
-                if(!(second instanceof python.object.PythonComplex))
-                    if(second instanceof python.object.PythonNumber )
-                        return new PythonBoolean((getValue()?1:0) >= ((python.object.PythonNumber) second).getValue());
-                return new PythonBoolean(false);
-            case "<=":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(new python.object.PythonInteger(bool.getValue()?1:0), "<=");
-                }
-                if(!(second instanceof python.object.PythonComplex))
-                    if(second instanceof python.object.PythonNumber )
-                        return new PythonBoolean((getValue()?1:0) <= ((python.object.PythonNumber) second).getValue());
-                return new PythonBoolean(false);
-        }
-        ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
-        return null;
-    }
 }
