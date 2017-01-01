@@ -1,9 +1,9 @@
-package python.object;
+package java.python.object;
 
-import python.error.ExceptionManager;
-import python.error.UnsupportedException;
+import java.python.error.ExceptionManager;
+import java.python.error.UnsupportedException;
 
-public class PythonInteger extends PythonObject implements PythonNumber
+public class PythonInteger extends PythonNumber
 {
 	private int value;
 	
@@ -36,6 +36,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "+");
 				}
+				break;
 			case "-":
 				if(second instanceof PythonComplex)
 				{
@@ -55,6 +56,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "-");
 				}
+				break;
 			case "/":
 				if(second instanceof PythonComplex)
 				{
@@ -70,6 +72,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "/");
 				}
+				break;
 			case "//":
 				if(second instanceof PythonNumber) {
 					PythonNumber number = (PythonNumber) second;
@@ -79,6 +82,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "//");
 				}
+				break;
 			case "*":
 				if(second instanceof PythonComplex)
 				{
@@ -99,8 +103,9 @@ public class PythonInteger extends PythonObject implements PythonNumber
 				}
 				if(second instanceof PythonString) {
 					PythonString str = (PythonString) second;
-					return new PythonString(new String(new char[(int) getValue()]).replace("\0", str.getValue()));
+					return new PythonString(new String(new char[(int)getValue()]).replace("\0", str.getValue()));
 				}
+				break;
 			case "|":
 				if(second instanceof PythonInteger) {
 					PythonNumber number = (PythonInteger) second;
@@ -110,6 +115,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "|");
 				}
+				break;
 			case "^":
 				if(second instanceof PythonInteger) {
 					PythonNumber number = (PythonInteger) second;
@@ -119,6 +125,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "^");
 				}
+				break;
 			case "&":
 				if(second instanceof PythonInteger) {
 					PythonNumber number = (PythonInteger) second;
@@ -128,6 +135,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "&");
 				}
+				break;
 			case ">>":
 				if(second instanceof PythonInteger) {
 					PythonNumber number = (PythonInteger) second;
@@ -137,6 +145,7 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, ">>");
 				}
+				break;
 			case "<<":
 				if(second instanceof PythonInteger) {
 					PythonNumber number = (PythonInteger) second;
@@ -146,12 +155,11 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "<<");
 				}
+				break;
 			case "and":
 				return second;
-			
 			case "or":
 				return new PythonInteger((int)(this.getValue()));
-			
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
@@ -166,22 +174,17 @@ public class PythonInteger extends PythonObject implements PythonNumber
 				if(getValue() == 0)
 					return new PythonBoolean(true);
 				return new PythonBoolean(false);
-			
 			case "~":
 				return new PythonInteger(~((int)(this.getValue())));
-			
 			case "-":
 				return new PythonInteger(-((int)(this.getValue())));
-			
 			case "+":
 				return new PythonInteger((int)(this.getValue()));
-			
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
 	}
 
-	@Override
 	public PythonBoolean compareTo(PythonObject second, String op)
 	{
 		switch (op)
@@ -192,66 +195,61 @@ public class PythonInteger extends PythonObject implements PythonNumber
 					PythonBoolean bool = (PythonBoolean) second;
 					return compareTo(bool, "==");
 				}
-				if(!(second instanceof  PythonComplex))
-					if(second instanceof PythonNumber)
-						return new PythonBoolean(getValue() == ((PythonNumber) second).getValue());
-				return new PythonBoolean(false);
-			
+				if(second instanceof  PythonComplex)
+					return new PythonBoolean(false);
+				if(second instanceof PythonNumber)
+					return new PythonBoolean(getValue() == ((PythonNumber) second).getValue());
+
 			case "!=":
 				if(second instanceof PythonBoolean)
 				{
 					PythonBoolean bool = (PythonBoolean) second;
 					return compareTo(bool, "!=");
 				}
-				if(!(second instanceof  PythonComplex))
-					if(second instanceof PythonNumber)
-						return new PythonBoolean(getValue() != ((PythonNumber) second).getValue());
-				return new PythonBoolean(true);
-			
+				if(second instanceof  PythonComplex)
+					return new PythonBoolean(true);
+				if(second instanceof PythonNumber)
+					return new PythonBoolean(getValue() != ((PythonNumber) second).getValue());
 			case ">":
 				if(second instanceof PythonBoolean)
 				{
 					PythonBoolean bool = (PythonBoolean) second;
 					return compareTo(bool, ">");
 				}
-				if(!(second instanceof  PythonComplex))
-					if(second instanceof PythonNumber)
-						return new PythonBoolean(getValue() > ((PythonNumber) second).getValue());
-				return new PythonBoolean(false);
-			
+				if(second instanceof  PythonComplex)
+					return new PythonBoolean(false);
+				if(second instanceof PythonNumber)
+					return new PythonBoolean(getValue() > ((PythonNumber) second).getValue());
 			case "<":
 				if(second instanceof PythonBoolean)
 				{
 					PythonBoolean bool = (PythonBoolean) second;
 					return compareTo(bool, "<");
 				}
-				if(!(second instanceof  PythonComplex))
-					if(second instanceof PythonNumber)
-						return new PythonBoolean(getValue() < ((PythonNumber) second).getValue());
-				return new PythonBoolean(false);
-			
+				if(second instanceof  PythonComplex)
+					return new PythonBoolean(false);
+				if(second instanceof PythonNumber)
+					return new PythonBoolean(getValue() < ((PythonNumber) second).getValue());
 			case ">=":
 				if(second instanceof PythonBoolean)
 				{
 					PythonBoolean bool = (PythonBoolean) second;
 					return compareTo(bool, ">=");
 				}
-				if(!(second instanceof  PythonComplex))
-					if(second instanceof PythonNumber)
-						return new PythonBoolean(getValue() >= ((PythonNumber) second).getValue());
-				return new PythonBoolean(false);
-			
+				if(second instanceof  PythonComplex)
+					return new PythonBoolean(false);
+				if(second instanceof PythonNumber)
+					return new PythonBoolean(getValue() >= ((PythonNumber) second).getValue());
 			case "<=":
 				if(second instanceof PythonBoolean)
 				{
 					PythonBoolean bool = (PythonBoolean) second;
 					return compareTo(bool, "<=");
 				}
-				if(!(second instanceof  PythonComplex))
-					if(second instanceof PythonNumber)
-						return new PythonBoolean(getValue() <= ((PythonNumber) second).getValue());
-				return new PythonBoolean(false);
-			
+				if(second instanceof  PythonComplex)
+					return new PythonBoolean(false);
+				if(second instanceof PythonNumber)
+					return new PythonBoolean(getValue() <= ((PythonNumber) second).getValue());
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;

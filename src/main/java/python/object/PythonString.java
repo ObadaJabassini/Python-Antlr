@@ -1,4 +1,7 @@
-package python.object;
+package java.python.object;
+
+import java.python.error.ExceptionManager;
+import java.python.error.UnsupportedException;
 
 public class PythonString extends PythonObject
 {
@@ -24,19 +27,17 @@ public class PythonString extends PythonObject
 			case "*":
 				if(second instanceof PythonInteger) {
 					PythonInteger number = (PythonInteger) second;
-					return new PythonString(new String(new char[number.getValue()]).replace("\0", getValue()));
+					return new PythonString(new String(new char[(int)number.getValue()]).replace("\0", getValue()));
 				}
 				if(second instanceof PythonBoolean) {
 					PythonBoolean number = (PythonBoolean) second;
-					return apply(number.getValue()?1:0, "*");
+					return apply(new PythonInteger(number.getValue()?1:0), "*");
 				}
 				break;
 			case "and":
 				return second;
-				break;
 			case "or":
 				return new PythonString(getValue());
-				break;
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
@@ -49,7 +50,6 @@ public class PythonString extends PythonObject
 		{
 			case "not":
 				return new PythonBoolean(false);
-				break;
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
@@ -66,7 +66,6 @@ public class PythonString extends PythonObject
 					return new PythonBoolean(str.getValue().compareTo(getValue()) == 0);
 				}
 				return new PythonBoolean(false);
-			break;
 			case "!=":
                 if(second instanceof PythonString)
                 {
@@ -74,7 +73,6 @@ public class PythonString extends PythonObject
                     return new PythonBoolean(str.getValue().compareTo(getValue()) != 0);
                 }
 				return new PythonBoolean(true);
-			break;
             case ">":
                 if(second instanceof PythonString)
                 {
@@ -82,7 +80,6 @@ public class PythonString extends PythonObject
                     return new PythonBoolean(str.getValue().compareTo(getValue()) > 0);
                 }
                 return new PythonBoolean(true);
-                break;
             case "<":
                 if(second instanceof PythonString)
                 {
@@ -90,7 +87,6 @@ public class PythonString extends PythonObject
                     return new PythonBoolean(str.getValue().compareTo(getValue()) < 0);
                 }
                 return new PythonBoolean(true);
-                break;
             case ">=":
                 if(second instanceof PythonString)
                 {
@@ -98,7 +94,6 @@ public class PythonString extends PythonObject
                     return new PythonBoolean(compareTo(str,"==").getValue() || compareTo(str,">").getValue());
                 }
                 return new PythonBoolean(true);
-                break;
             case "<=":
                 if(second instanceof PythonString)
                 {
@@ -106,7 +101,6 @@ public class PythonString extends PythonObject
                     return new PythonBoolean(compareTo(str,"==").getValue() || compareTo(str,"<").getValue());
                 }
                 return new PythonBoolean(true);
-                break;
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;

@@ -1,6 +1,9 @@
-package python.object;
+package java.python.object;
 
-public class PythonComplex extends PythonObject implements PythonNumber
+import java.python.error.ExceptionManager;
+import java.python.error.UnsupportedException;
+
+public class PythonComplex extends PythonNumber
 {
 	private double i, j;
 	public PythonComplex(String str){
@@ -35,7 +38,7 @@ public class PythonComplex extends PythonObject implements PythonNumber
                 }
                 if(second instanceof PythonNumber) {
                     PythonNumber number = (PythonNumber) second;
-                    return new PythonFloat(this.getValue() - number.getValue(), getImgValue());
+                    return new PythonComplex(this.getValue() - number.getValue(), getImgValue());
                 }
                 if(second instanceof PythonBoolean) {
                     PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
@@ -45,8 +48,8 @@ public class PythonComplex extends PythonObject implements PythonNumber
             case "/":
                 if(second instanceof PythonComplex) {
                     PythonComplex number = (PythonComplex) second;
-                    PythonComplex op1 = apply(new PythonComplex(number.getValue(), -number.getImgValue()), "*");
-                    double op2 = number.apply(new PythonComplex(number.getValue(), -number.getImgValue()), "*").getValue();
+                    PythonComplex op1 = (PythonComplex) apply(new PythonComplex(number.getValue(), -number.getImgValue()), "*");
+                    double op2 = ((PythonNumber) number.apply(new PythonComplex(number.getValue(), -number.getImgValue()), "*")).getValue();
                     return new PythonComplex(op1.getValue()/op2, op1.getImgValue()/op2);
                 }
                 if(second instanceof PythonNumber) {
@@ -76,10 +79,8 @@ public class PythonComplex extends PythonObject implements PythonNumber
                 break;
             case "and":
                 return second;
-            break;
             case "or":
                 return new PythonComplex(getValue(), getImgValue());
-            break;
         }
         ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
         return null;
@@ -94,13 +95,10 @@ public class PythonComplex extends PythonObject implements PythonNumber
                 if(getValue() == 0.0 && getImgValue() == 0.0)
                     return new PythonBoolean(true);
                 return new PythonBoolean(false);
-            break;
             case "-":
                 return new PythonComplex(-this.getValue(), -getImgValue());
-            break;
             case "+":
                 return new PythonComplex(this.getValue(), getImgValue());
-            break;
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
@@ -117,15 +115,13 @@ public class PythonComplex extends PythonObject implements PythonNumber
                     return new PythonBoolean(number.getValue() == getValue() && number.getImgValue() == getImgValue());
                 }
                 return new PythonBoolean(false);
-            break;
             case "!=":
-                if(second instanceof PythonBoolean)
+                if(second instanceof PythonComplex)
                 {
                     PythonComplex number = (PythonComplex) second;
                     return new PythonBoolean(number.getValue() != getValue() || number.getImgValue() != getImgValue());
                 }
                 return new PythonBoolean(true);
-            break;
         }
         ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
         return null;

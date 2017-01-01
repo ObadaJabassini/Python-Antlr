@@ -1,4 +1,4 @@
-package python.object;
+package java.python.object;
 
 public interface PythonOperation
 {

@@ -1,19 +1,20 @@
-package python.object;
+package java.python.object;
 
-import python.error.ExceptionManager;
-import python.error.UnsupportedException;
+import java.python.error.ExceptionManager;
+import java.python.error.UnsupportedException;
 
-public class PythonFloat extends PythonObject implements PythonNumber
+public class PythonFloat extends PythonNumber
 {
 	private double value;
 	
 	public PythonFloat(String str){
 		this.value = Double.parseDouble(str);
 	}
-	
-	public PythonFloat(double v){
-		this.value = v;
-	}
+
+	public PythonFloat(double f)
+    {
+        value = f;
+    }
 
 	@Override
 	public PythonObject apply(PythonObject second, String op) {
@@ -83,12 +84,13 @@ public class PythonFloat extends PythonObject implements PythonNumber
                 }
 				if(second instanceof PythonNumber) {
 					PythonNumber number = (PythonNumber) second;
-					return new PythonInteger((int) (this.getValue() * number.getValue()));
+					return new PythonFloat(this.getValue() * number.getValue());
 				}
 				if(second instanceof PythonBoolean) {
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "*");
 				}
+				break;
 			case "and":
 				return second;
 			case "or":
@@ -108,9 +110,9 @@ public class PythonFloat extends PythonObject implements PythonNumber
 					return new PythonBoolean(true);
 				return new PythonBoolean(false);
 			case "-":
-				return new PythonInteger((int) -this.getValue());
+				return new PythonFloat(-this.getValue());
 			case "+":
-				return new PythonInteger((int) this.getValue());
+				return new PythonFloat(this.getValue());
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
@@ -126,60 +128,61 @@ public class PythonFloat extends PythonObject implements PythonNumber
                     PythonBoolean bool = (PythonBoolean) second;
                     return compareTo(bool, "==");
                 }
-                if(!(second instanceof  PythonComplex))
-                    if(second instanceof PythonNumber)
-                        return new PythonBoolean(getValue() == ((PythonNumber) second).getValue());
-                return new PythonBoolean(false);
+                if(second instanceof  PythonComplex)
+                    return new PythonBoolean(false);
+                if(second instanceof PythonNumber)
+                    return new PythonBoolean(getValue() == ((PythonNumber) second).getValue());
+
             case "!=":
                 if(second instanceof PythonBoolean)
                 {
                     PythonBoolean bool = (PythonBoolean) second;
                     return compareTo(bool, "!=");
                 }
-                if(!(second instanceof  PythonComplex))
-                    if(second instanceof PythonNumber)
-                        return new PythonBoolean(getValue() != ((PythonNumber) second).getValue());
-                return new PythonBoolean(true);
+                if(second instanceof  PythonComplex)
+                    return new PythonBoolean(true);
+                if(second instanceof PythonNumber)
+                    return new PythonBoolean(getValue() != ((PythonNumber) second).getValue());
             case ">":
                 if(second instanceof PythonBoolean)
                 {
                     PythonBoolean bool = (PythonBoolean) second;
                     return compareTo(bool, ">");
                 }
-                if(!(second instanceof  PythonComplex))
-                    if(second instanceof PythonNumber)
-                        return new PythonBoolean(getValue() > ((PythonNumber) second).getValue());
-                return new PythonBoolean(false);
+                if(second instanceof  PythonComplex)
+                    return new PythonBoolean(false);
+                if(second instanceof PythonNumber)
+                    return new PythonBoolean(getValue() > ((PythonNumber) second).getValue());
             case "<":
                 if(second instanceof PythonBoolean)
                 {
                     PythonBoolean bool = (PythonBoolean) second;
                     return compareTo(bool, "<");
                 }
-                if(!(second instanceof  PythonComplex))
-                    if(second instanceof PythonNumber)
-                        return new PythonBoolean(getValue() < ((PythonNumber) second).getValue());
-                return new PythonBoolean(false);
+                if(second instanceof  PythonComplex)
+                    return new PythonBoolean(false);
+                if(second instanceof PythonNumber)
+                    return new PythonBoolean(getValue() < ((PythonNumber) second).getValue());
             case ">=":
                 if(second instanceof PythonBoolean)
                 {
                     PythonBoolean bool = (PythonBoolean) second;
                     return compareTo(bool, ">=");
                 }
-                if(!(second instanceof  PythonComplex))
-                    if(second instanceof PythonNumber)
-                        return new PythonBoolean(getValue() >= ((PythonNumber) second).getValue());
-                return new PythonBoolean(false);
+                if(second instanceof  PythonComplex)
+                    return new PythonBoolean(false);
+                if(second instanceof PythonNumber)
+                    return new PythonBoolean(getValue() >= ((PythonNumber) second).getValue());
             case "<=":
                 if(second instanceof PythonBoolean)
                 {
                     PythonBoolean bool = (PythonBoolean) second;
                     return compareTo(bool, "<=");
                 }
-                if(!(second instanceof  PythonComplex))
-                    if(second instanceof PythonNumber)
-                        return new PythonBoolean(getValue() <= ((PythonNumber) second).getValue());
-                return new PythonBoolean(false);
+                if(second instanceof  PythonComplex)
+                    return new PythonBoolean(false);
+                if(second instanceof PythonNumber)
+                    return new PythonBoolean(getValue() <= ((PythonNumber) second).getValue());
         }
         ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
         return null;
