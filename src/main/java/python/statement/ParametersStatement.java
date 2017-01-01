@@ -1,6 +1,5 @@
 package python.statement;
 
-import python.object.ExpressionTree;
 import python.object.PythonObject;
 import python.scope.SymbolTable;
 

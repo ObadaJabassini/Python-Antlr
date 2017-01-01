@@ -168,6 +168,7 @@ public class PythonBoolean extends python.object.PythonObject
         switch (op)
         {
             case "not":
+	        case "!":
                 return new PythonBoolean(!getValue());
             case "~":
                 return new python.object.PythonInteger(~(getValue()?1:0));

@@ -1,6 +1,6 @@
-package python.object;
+package python.statement;
 
-import python.statement.Statement;
+import python.object.PythonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +38,6 @@ public class ExpressionTree extends Statement
 	
 	private PythonObject eval(Node node){
 		if(node.op == null && node.children.isEmpty()){
-			return Python.none();
-		}
-		if(node.op == null){
 			return node.object.apply(node.speical);
 		}
 		if(node.children.size() == 1){

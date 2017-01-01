@@ -1,6 +1,5 @@
 package python.statement;
 
-import python.object.ExpressionTree;
 import python.object.PythonBoolean;
 import python.object.PythonObject;
 
