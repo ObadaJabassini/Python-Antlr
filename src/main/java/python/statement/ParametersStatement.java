@@ -1,7 +1,5 @@
 package python.statement;
 
-import python.error.ExceptionManager;
-import python.error.IllegalArguments;
 import python.object.ArgumentListStatement;
 import python.object.ArgumentStatement;
 import python.object.ExpressionTree;
@@ -51,10 +49,10 @@ public class ParametersStatement extends Statement
 		for (String anOriginal : original) {
 			remaining.add(anOriginal);
 		}
-		if(statement.getArguments().size() != original.size()){
-			ExceptionManager.getManager().add(new IllegalArguments(0, 0, "number of arguments dont match"));
-			return;
-		}
+//		if(statement.getArguments().size() != original.size()){
+//			ExceptionManager.getManager().add(new IllegalArguments(0, 0, "number of arguments dont match"));
+//			return;
+//		}
 		statement.getArguments().forEach(argumentStatement -> addParam(argumentStatement.getName(), argumentStatement.getTree(), remaining));
 	}
 }

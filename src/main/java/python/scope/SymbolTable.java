@@ -35,6 +35,7 @@ public class SymbolTable
 	
 	public void endScope(){
 		currentScope = currentScope.getParent();
+		toGlobal.clear();
 	}
 	
 	public PythonObject lookup(String name){

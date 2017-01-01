@@ -13,6 +13,6 @@ public class DeleteStatement extends Statement
 	@Override
 	public Object run() {
 		SymbolTable.getTable().removeVariable(((PythonString)tree.run()).getValue());
-		return null;
+		return this;
 	}
 }

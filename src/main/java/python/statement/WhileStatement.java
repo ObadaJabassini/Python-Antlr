@@ -36,6 +36,6 @@ public class WhileStatement extends Statement
 				break;
 			}
 		}
-		return null;
+		return this;
 	}
 }

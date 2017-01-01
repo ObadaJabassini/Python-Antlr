@@ -6,8 +6,9 @@ public class PrintStatement extends Statement
 {
 	private String name;
 	@Override
-	public void run() {
+	public Object run() {
 		System.out.println(SymbolTable.getTable().lookup(name));
+		return this;
 	}
 	
 	public void setName(String name){

@@ -15,6 +15,21 @@ import java.util.stream.Collectors;
 public class Visitor implements Python3Visitor<Statement>
 {
 	private Map<String, PythonFunction> functions = new HashMap<>();
+	{
+		List<Statement> statements = new ArrayList<>();
+		PrintStatement printStatement = new PrintStatement();
+		printStatement.setName("x");
+		statements.add(printStatement);
+		Map<String, ExpressionTree> trees = new LinkedHashMap<>();
+		ExpressionTree tree = new ExpressionTree(null);
+		ExpressionTree.Node n = new ExpressionTree.Node();
+		n.object = new PythonInteger(10);
+		tree.setRoot(n);
+		trees.put("x", tree);
+		ParametersStatement statement = new ParametersStatement(trees);
+		PythonFunction function = new PythonFunction("print", new StatementBlock(statements), statement);
+		functions.put("print", function);
+	}
 	
 	@Override
 	public Statement visitTestlist(@NotNull Python3Parser.TestlistContext ctx) {
