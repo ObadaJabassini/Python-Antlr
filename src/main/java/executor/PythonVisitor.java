@@ -238,7 +238,9 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitComparison(@NotNull Python3Parser.ComparisonContext ctx) {
 		if(ctx.star_expr().size() == 1){
-			return new ComparisonStatement(null, new ArrayList<ExpressionTree>() {{visitStar_expr(ctx.star_expr(0));}});
+			List<ExpressionTree> trees = new ArrayList<>();
+			trees.add((ExpressionTree) visitStar_expr(ctx.star_expr(0)));
+			return new ComparisonStatement(null, trees);
 		}
 		List<String> ops = new ArrayList<>();
 		List<ExpressionTree> trees = new ArrayList<>();
@@ -619,7 +621,6 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
 		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
-		System.out.println(names);
 		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
 		if(ctx.augassign() == null)
 			return new AssignStatement(names, statement.getTrees());
