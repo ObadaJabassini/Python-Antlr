@@ -9,10 +9,7 @@ import python.object.*;
 import python.scope.SymbolTable;
 import python.statement.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Visitor implements Python3Visitor<Statement>
@@ -583,8 +580,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitProg(@NotNull Python3Parser.ProgContext ctx) {
-		StatementBlock block = new StatementBlock(ctx.stmt().stream().map(this::visitStmt).collect(Collectors.toList()));
-		return block;
+		return new StatementBlock(ctx.stmt().stream().map(this::visitStmt).collect(Collectors.toList()));
 	}
 	
 	@Override
@@ -618,8 +614,9 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFor_stmt(@NotNull Python3Parser.For_stmtContext ctx) {
-		
-		return null;
+		TestListStatement testListStatement = (TestListStatement) visitTestlist(ctx.testlist());
+		StatementBlock body = (StatementBlock) visitSuite(ctx.suite(0));
+		return new ForStatement(new ArrayList<>(Arrays.asList(ctx.exprlist().getText().split(","))), testListStatement.getTrees(), body);
 	}
 	
 	@Override
@@ -658,14 +655,12 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitStmt(@NotNull Python3Parser.StmtContext ctx) {
-		Statement statement;
 		if ( ctx.compound_stmt().getText().equals("") ) {
-			statement = visit(ctx.simple_stmt());
+			return visitSimple_stmt(ctx.simple_stmt());
 		}
 		else {
-			statement = visit(ctx.compound_stmt());
+			return visitCompound_stmt(ctx.compound_stmt());
 		}
-		return statement;
 	}
 	
 	@Override

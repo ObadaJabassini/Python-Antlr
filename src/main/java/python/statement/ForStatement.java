@@ -1,31 +1,37 @@
 package python.statement;
 
+import python.object.ExpressionTree;
 import python.object.PythonIterator;
 import python.object.PythonReturn;
-import python.object.PythonTraverse;
 import python.scope.SymbolTable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ForStatement extends Statement
 {
 	private List<String> names;
-	private PythonTraverse traverse;
+	private List<ExpressionTree> trees;
 	private StatementBlock block;
 	
-	public ForStatement(List<String> names, PythonTraverse traverse, StatementBlock block) {
+	public ForStatement(List<String> names, List<ExpressionTree> trees, StatementBlock block) {
 		this.names = names;
-		this.traverse = traverse;
+		this.trees = trees;
 		this.block = block;
 	}
 	
 	@Override
 	public Object run() {
-		PythonIterator iterator = traverse.iterator();
-		int i = 0;
+		List<PythonIterator> iterators = new ArrayList<>();
+		for (ExpressionTree tree : trees) {
+			iterators.add((PythonIterator) tree.run());
+		}
+		PythonIterator iterator = iterators.get(0);
 		boolean finished = false;
 		while (iterator.hasNext() && !finished) {
-			SymbolTable.getTable().addVariable(names.get(i++), iterator.next(), "local");
+			for (int i = 0; i < names.size(); i++) {
+				SymbolTable.getTable().addVariable(names.get(i), iterators.get(i).next(), "local");
+			}
 			for (int j = 0; j < block.getStatements().size(); j++) {
 				Object object = block.getStatements().get(j);
 				if ( object instanceof PythonReturn ) {
