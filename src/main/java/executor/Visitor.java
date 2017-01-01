@@ -571,7 +571,9 @@ public class Visitor implements Python3Visitor<Statement>
 	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
 		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
 		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
-		return new AssignStatement(names, statement.getTrees());
+		if(ctx.augassign().getText().equals(""))
+			return new AssignStatement(names, statement.getTrees());
+		return new AugAssignStatement(ctx.augassign().getText(), names, statement.getTrees());
 	}
 	
 	@Override
