@@ -2,6 +2,7 @@ package python.object;
 
 import python.scope.SymbolTable;
 import python.statement.ParametersStatement;
+import python.statement.Statement;
 import python.statement.StatementBlock;
 
 public class PythonFunction extends PythonObject
@@ -19,8 +20,13 @@ public class PythonFunction extends PythonObject
 	private PythonObject call(){
 		parameters.run();
 		for (int i = 0; i < body.getStatements().size(); i++) {
-			Object object = body.getStatements().get(i).run();
+			Object object = body.getStatements().get(i);
 			if(object instanceof ReturnStatement ) {
+				SymbolTable.getTable().endScope();
+				return (PythonObject) ((ReturnStatement) object).run();
+			}
+			object = ((Statement)object).run();
+			if(object instanceof ReturnStatement){
 				SymbolTable.getTable().endScope();
 				return (PythonObject) ((ReturnStatement) object).run();
 			}
