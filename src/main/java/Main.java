@@ -11,7 +11,7 @@ import java.io.*;
 public class Main
 {
     public static void main(String[] args) throws Exception {
-    	String path = "tests/test2.py";
+    	String path = "tests/test3.py";
 //        HelperParser helperParser = new HelperParser();
 //        AstPrinter astPrinter = new AstPrinter();
 //	    astPrinter.print(helperParser.parse(new File(path)));

@@ -338,7 +338,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitComp_op(@NotNull Python3Parser.Comp_opContext ctx) {
-		return PythonObject.nil();
+		return Python.none();
 	}
 	
 	@Override

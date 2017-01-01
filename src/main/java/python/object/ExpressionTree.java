@@ -38,7 +38,7 @@ public class ExpressionTree extends Statement
 	
 	private PythonObject eval(Node node){
 		if(node.op == null && node.children.isEmpty()){
-			return PythonObject.nil();
+			return Python.none();
 		}
 		if(node.op == null){
 			return node.object.apply(node.speical);
