@@ -15,6 +15,13 @@ public class PythonList extends PythonTraverse
         return objects;
     }
 
+    public PythonObject get(int index){
+        return objects.get(index);
+    }
+    public void set(int index, PythonObject obj){
+        objects.set(index, obj);
+    }
+
     @Override
     public PythonObject apply(PythonObject second, String op)
     {
