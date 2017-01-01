@@ -1,5 +1,6 @@
 package python.object;
 
+import python.scope.SymbolTable;
 import python.statement.ParametersStatement;
 import python.statement.StatementBlock;
 
@@ -15,8 +16,22 @@ public class PythonFunction extends PythonObject
 		this.parameters = parameters;
 	}
 	
-	public void call(){
-		body.run();
+	private PythonObject call(){
+		parameters.run();
+		for (int i = 0; i < body.getStatements().size(); i++) {
+			Object object = body.getStatements().get(i).run();
+			if(object instanceof PythonReturn) {
+				SymbolTable.getTable().endScope();
+				return (PythonObject) ((PythonReturn) object).run();
+			}
+		}
+		SymbolTable.getTable().endScope();
+		return Python.none();
+	}
+	
+	@Override
+	public Object run() {
+		return call();
 	}
 	
 	public String getName() {
@@ -41,5 +56,9 @@ public class PythonFunction extends PythonObject
 	
 	public void setParameters(ParametersStatement parameters) {
 		this.parameters = parameters;
+	}
+	
+	public void setParameters(ArgumentListStatement arguments){
+		parameters.setParams(arguments);
 	}
 }

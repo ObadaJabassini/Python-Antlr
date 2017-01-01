@@ -32,7 +32,10 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitArgument(@NotNull Python3Parser.ArgumentContext ctx) {
-		return null;
+		if(ctx.test().size() == 1){
+			return new ArgumentStatement(ArgumentStatement.notExist, (ExpressionTree) visitTest(ctx.test(0)));
+		}
+		return new ArgumentStatement(ctx.test(0).getText(), (ExpressionTree) visitTest(ctx.test(1)));
 	}
 	
 	@Override
@@ -336,7 +339,7 @@ public class Visitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitParameters(@NotNull Python3Parser.ParametersContext ctx) {
 		if ( ctx.typedargslist().getText().equals("") ) {
-			return new ParametersStatement(new HashMap<>());
+			return new ParametersStatement(new LinkedHashMap<>());
 		}
 		return visitTypedargslist(ctx.typedargslist());
 	}
@@ -405,7 +408,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTrailer(@NotNull Python3Parser.TrailerContext ctx) {
-		return null;
+		return visitArglist(ctx.arglist());
 	}
 	
 	@Override
@@ -430,7 +433,11 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitArglist(@NotNull Python3Parser.ArglistContext ctx) {
-		return null;
+		List<ArgumentStatement> statements = new ArrayList<>();
+		for (int i = 0; i < ctx.argument().size(); i++) {
+			statements.add((ArgumentStatement) visitArgument(ctx.argument(i)));
+		}
+		return new ArgumentListStatement(statements);
 	}
 	
 	@Override
@@ -484,6 +491,17 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitPower(@NotNull Python3Parser.PowerContext ctx) {
+		if(ctx.trailer().size() != 0){
+			ExpressionTree tree = new ExpressionTree(null);
+			ExpressionTree.Node node = new ExpressionTree.Node();
+			PythonFunction function = functions.get(ctx.atom().getText());
+			node.object = function;
+			ArgumentListStatement argumentListStatement = (ArgumentListStatement) visitTrailer(ctx.trailer().get(0));
+			tree.setRoot(node);
+			function.setParameters(argumentListStatement);
+			SymbolTable.getTable().beginScope(ctx.atom().getText(), SymbolTable.ScopeType.FUNCTION);
+			return tree;
+		}
 		return visitAtom(ctx.atom());
 	}
 	
@@ -588,6 +606,9 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSuite(@NotNull Python3Parser.SuiteContext ctx) {
+		if(!ctx.simple_stmt().getText().equals("")){
+			return new StatementBlock(new ArrayList<>(Collections.singletonList(visitSimple_stmt(ctx.simple_stmt()))));
+		}
 		List<Statement> statements = new ArrayList<>();
 		for (Python3Parser.StmtContext context : ctx.stmt()) {
 			statements.add(visitStmt(context));
