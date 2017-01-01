@@ -1,7 +1,5 @@
 package python.statement;
 
-import python.object.ArgumentListStatement;
-import python.object.ArgumentStatement;
 import python.object.ExpressionTree;
 import python.object.PythonObject;
 import python.scope.SymbolTable;

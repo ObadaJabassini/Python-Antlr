@@ -1,6 +1,5 @@
-package java.python.object;
-
-public abstract class PythonNumber extends PythonObject
+package python.object;
+public abstract class PythonNumber extends python.object.PythonObject
 {
 	abstract double getValue();
 }

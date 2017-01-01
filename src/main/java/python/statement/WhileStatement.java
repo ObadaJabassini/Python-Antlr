@@ -1,7 +1,6 @@
 package python.statement;
 
 import python.object.PythonBoolean;
-import python.object.ReturnStatement;
 
 import java.util.List;
 

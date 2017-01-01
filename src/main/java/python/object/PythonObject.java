@@ -1,8 +1,10 @@
-package java.python.object;
-import java.python.statement.Statement;
+package python.object;
+
+import python.statement.Statement;
+
 import java.util.Objects;
 
-public class PythonObject extends Statement implements PythonComparable, PythonOperation
+public class PythonObject extends Statement implements PythonComparable, python.object.PythonOperation
 {
 	public Class<? extends PythonObject> clz = getClass();
 	
@@ -18,6 +20,7 @@ public class PythonObject extends Statement implements PythonComparable, PythonO
 	
 	@Override
 	public PythonBoolean compareTo(PythonObject second, String op) {
+		
 		return new PythonBoolean(false);
 	}
 	

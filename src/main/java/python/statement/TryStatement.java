@@ -1,7 +1,6 @@
 package python.statement;
 
 import python.object.PythonError;
-import python.object.ReturnStatement;
 
 public class TryStatement extends Statement
 {
@@ -20,7 +19,11 @@ public class TryStatement extends Statement
 			if(object instanceof ReturnStatement ){
 				return object;
 			}
-			((Statement)object).run();
+			object = ((Statement)object).run();
+			if(object == LoopBreakType.BREAK)
+				return new BreakStatement();
+			if ( object == LoopBreakType.CONTINUE )
+				return new ContinueStatement();
 			if(object instanceof PythonError){
 				except = true;
 				break;
@@ -32,7 +35,11 @@ public class TryStatement extends Statement
 				if(object instanceof ReturnStatement ){
 					return object;
 				}
-				((Statement)object).run();
+				object = ((Statement)object).run();
+				if(object == LoopBreakType.BREAK)
+					return new BreakStatement();
+				if ( object == LoopBreakType.CONTINUE )
+					return new ContinueStatement();
 				if(object instanceof PythonError){
 					except = true;
 					break;

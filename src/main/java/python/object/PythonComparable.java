@@ -1,6 +1,6 @@
-package java.python.object;
+package python.object;
 
 public interface PythonComparable
 {
-	PythonBoolean compareTo(PythonObject second, String op);
+	PythonBoolean compareTo(python.object.PythonObject second, String op);
 }

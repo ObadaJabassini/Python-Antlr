@@ -1,7 +1,5 @@
 package python.statement;
 
-import python.object.ReturnStatement;
-
 import java.util.List;
 
 public class StatementBlock extends Statement

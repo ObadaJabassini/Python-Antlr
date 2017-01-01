@@ -1,9 +1,8 @@
-package java.python.object;
+package python.object;
+import python.error.ExceptionManager;
+import python.error.UnsupportedException;
 
-import java.python.error.ExceptionManager;
-import java.python.error.UnsupportedException;
-
-public class PythonInteger extends PythonNumber
+public class PythonInteger extends python.object.PythonNumber
 {
 	private int value;
 	
@@ -16,7 +15,7 @@ public class PythonInteger extends PythonNumber
 	}
 
 	@Override
-	public PythonObject apply(PythonObject second, String op) {
+	public python.object.PythonObject apply(python.object.PythonObject second, String op) {
 		switch (op){
 			case "+":
 				if(second instanceof PythonComplex)
@@ -25,11 +24,11 @@ public class PythonInteger extends PythonNumber
 					return number.apply(this, "+");
 				}
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue() + number.getValue()));
 				}
 				if(second instanceof PythonFloat) {
-					PythonNumber number = (PythonFloat) second;
+					python.object.PythonNumber number = (PythonFloat) second;
 					return new PythonFloat(this.getValue() + number.getValue());
 				}
 				if(second instanceof PythonBoolean) {
@@ -45,11 +44,11 @@ public class PythonInteger extends PythonNumber
 					return number.apply(this.apply("-"), "-");
 				}
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue() - number.getValue()));
 				}
 				if(second instanceof PythonFloat) {
-					PythonNumber number = (PythonFloat) second;
+					python.object.PythonNumber number = (PythonFloat) second;
 					return new PythonFloat(this.getValue() - number.getValue());
 				}
 				if(second instanceof PythonBoolean) {
@@ -64,8 +63,8 @@ public class PythonInteger extends PythonNumber
 					PythonComplex thisAsComplex = new PythonComplex(getValue(), 0);
 					return thisAsComplex.apply(number, "/");
 				}
-				if(second instanceof PythonNumber) {
-					PythonNumber number = (PythonNumber) second;
+				if(second instanceof python.object.PythonNumber ) {
+					python.object.PythonNumber number = (python.object.PythonNumber) second;
 					return new PythonFloat(this.getValue() / number.getValue());
 				}
 				if(second instanceof PythonBoolean) {
@@ -74,8 +73,8 @@ public class PythonInteger extends PythonNumber
 				}
 				break;
 			case "//":
-				if(second instanceof PythonNumber) {
-					PythonNumber number = (PythonNumber) second;
+				if(second instanceof python.object.PythonNumber ) {
+					python.object.PythonNumber number = (python.object.PythonNumber) second;
 					return new PythonInteger((int)(this.getValue()) / (int)(number.getValue()));
 				}
 				if(second instanceof PythonBoolean) {
@@ -90,25 +89,25 @@ public class PythonInteger extends PythonNumber
 					return number.apply(this, "*");
 				}
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue() * number.getValue()));
 				}
 				if(second instanceof PythonFloat) {
-					PythonNumber number = (PythonFloat) second;
+					python.object.PythonNumber number = (PythonFloat) second;
 					return new PythonFloat(this.getValue() * number.getValue());
 				}
 				if(second instanceof PythonBoolean) {
 					PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
 					return apply(number, "*");
 				}
-				if(second instanceof PythonString) {
-					PythonString str = (PythonString) second;
-					return new PythonString(new String(new char[(int)getValue()]).replace("\0", str.getValue()));
+				if(second instanceof python.object.PythonString ) {
+					python.object.PythonString str = (python.object.PythonString) second;
+					return new python.object.PythonString(new String(new char[(int)getValue()]).replace("\0", str.getValue()));
 				}
 				break;
 			case "|":
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue()) | (int) (number.getValue()));
 				}
 				if(second instanceof PythonBoolean) {
@@ -118,7 +117,7 @@ public class PythonInteger extends PythonNumber
 				break;
 			case "^":
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue()) ^ (int) (number.getValue()));
 				}
 				if(second instanceof PythonBoolean) {
@@ -128,7 +127,7 @@ public class PythonInteger extends PythonNumber
 				break;
 			case "&":
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue()) & (int) (number.getValue()));
 				}
 				if(second instanceof PythonBoolean) {
@@ -138,7 +137,7 @@ public class PythonInteger extends PythonNumber
 				break;
 			case ">>":
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue()) >> (int) (number.getValue()));
 				}
 				if(second instanceof PythonBoolean) {
@@ -148,7 +147,7 @@ public class PythonInteger extends PythonNumber
 				break;
 			case "<<":
 				if(second instanceof PythonInteger) {
-					PythonNumber number = (PythonInteger) second;
+					python.object.PythonNumber number = (PythonInteger) second;
 					return new PythonInteger((int)(this.getValue()) << (int) (number.getValue()));
 				}
 				if(second instanceof PythonBoolean) {
@@ -166,7 +165,7 @@ public class PythonInteger extends PythonNumber
 	}
 
 	@Override
-	public PythonObject apply(String op)
+	public python.object.PythonObject apply(String op)
 	{
 		switch (op)
 		{
@@ -185,7 +184,7 @@ public class PythonInteger extends PythonNumber
 		return null;
 	}
 
-	public PythonBoolean compareTo(PythonObject second, String op)
+	public PythonBoolean compareTo(python.object.PythonObject second, String op)
 	{
 		switch (op)
 		{
@@ -197,8 +196,8 @@ public class PythonInteger extends PythonNumber
 				}
 				if(second instanceof  PythonComplex)
 					return new PythonBoolean(false);
-				if(second instanceof PythonNumber)
-					return new PythonBoolean(getValue() == ((PythonNumber) second).getValue());
+				if(second instanceof python.object.PythonNumber )
+					return new PythonBoolean(getValue() == ((python.object.PythonNumber) second).getValue());
 
 			case "!=":
 				if(second instanceof PythonBoolean)
@@ -208,8 +207,8 @@ public class PythonInteger extends PythonNumber
 				}
 				if(second instanceof  PythonComplex)
 					return new PythonBoolean(true);
-				if(second instanceof PythonNumber)
-					return new PythonBoolean(getValue() != ((PythonNumber) second).getValue());
+				if(second instanceof python.object.PythonNumber )
+					return new PythonBoolean(getValue() != ((python.object.PythonNumber) second).getValue());
 			case ">":
 				if(second instanceof PythonBoolean)
 				{
@@ -218,8 +217,8 @@ public class PythonInteger extends PythonNumber
 				}
 				if(second instanceof  PythonComplex)
 					return new PythonBoolean(false);
-				if(second instanceof PythonNumber)
-					return new PythonBoolean(getValue() > ((PythonNumber) second).getValue());
+				if(second instanceof python.object.PythonNumber )
+					return new PythonBoolean(getValue() > ((python.object.PythonNumber) second).getValue());
 			case "<":
 				if(second instanceof PythonBoolean)
 				{
@@ -228,8 +227,8 @@ public class PythonInteger extends PythonNumber
 				}
 				if(second instanceof  PythonComplex)
 					return new PythonBoolean(false);
-				if(second instanceof PythonNumber)
-					return new PythonBoolean(getValue() < ((PythonNumber) second).getValue());
+				if(second instanceof python.object.PythonNumber )
+					return new PythonBoolean(getValue() < ((python.object.PythonNumber) second).getValue());
 			case ">=":
 				if(second instanceof PythonBoolean)
 				{
@@ -238,8 +237,8 @@ public class PythonInteger extends PythonNumber
 				}
 				if(second instanceof  PythonComplex)
 					return new PythonBoolean(false);
-				if(second instanceof PythonNumber)
-					return new PythonBoolean(getValue() >= ((PythonNumber) second).getValue());
+				if(second instanceof python.object.PythonNumber )
+					return new PythonBoolean(getValue() >= ((python.object.PythonNumber) second).getValue());
 			case "<=":
 				if(second instanceof PythonBoolean)
 				{
@@ -248,8 +247,8 @@ public class PythonInteger extends PythonNumber
 				}
 				if(second instanceof  PythonComplex)
 					return new PythonBoolean(false);
-				if(second instanceof PythonNumber)
-					return new PythonBoolean(getValue() <= ((PythonNumber) second).getValue());
+				if(second instanceof python.object.PythonNumber )
+					return new PythonBoolean(getValue() <= ((python.object.PythonNumber) second).getValue());
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;

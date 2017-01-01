@@ -1,6 +1,4 @@
-package python.object;
-
-import python.statement.Statement;
+package python.statement;
 
 import java.util.List;
 

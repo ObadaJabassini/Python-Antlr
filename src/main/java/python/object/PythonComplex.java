@@ -1,9 +1,11 @@
-package java.python.object;
+package python.object;
 
-import java.python.error.ExceptionManager;
-import java.python.error.UnsupportedException;
+import python.object.PythonBoolean;
 
-public class PythonComplex extends PythonNumber
+import python.error.ExceptionManager;
+import python.error.UnsupportedException;
+
+public class PythonComplex extends python.object.PythonNumber
 {
 	private double i, j;
 	public PythonComplex(String str){
@@ -15,19 +17,20 @@ public class PythonComplex extends PythonNumber
     }
 
 	@Override
-	public PythonObject apply(PythonObject second, String op) {
+	public python.object.PythonObject apply(python.object.PythonObject second, String op) {
         switch (op){
             case "+":
-                if(second instanceof PythonComplex) {
+	            
+	            if(second instanceof PythonComplex) {
                     PythonComplex number = (PythonComplex) second;
                     return new PythonComplex(this.getValue() + number.getValue(), getImgValue() + number.getImgValue());
                 }
-                if(second instanceof PythonNumber) {
-                    PythonNumber number = (PythonNumber) second;
+                if(second instanceof python.object.PythonNumber ) {
+                    python.object.PythonNumber number = (python.object.PythonNumber) second;
                     return new PythonComplex(this.getValue() + number.getValue(), getImgValue());
                 }
-                if(second instanceof PythonBoolean) {
-                    PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
+                if(second instanceof PythonBoolean ) {
+                    python.object.PythonInteger number = new python.object.PythonInteger(((PythonBoolean) second).getValue()?1:0);
                     return apply(number, "+");
                 }
                 break;
@@ -36,12 +39,12 @@ public class PythonComplex extends PythonNumber
                     PythonComplex number = (PythonComplex) second;
                     return new PythonComplex(this.getValue() - number.getValue(), getImgValue() - number.getImgValue());
                 }
-                if(second instanceof PythonNumber) {
-                    PythonNumber number = (PythonNumber) second;
+                if(second instanceof python.object.PythonNumber ) {
+                    python.object.PythonNumber number = (python.object.PythonNumber) second;
                     return new PythonComplex(this.getValue() - number.getValue(), getImgValue());
                 }
                 if(second instanceof PythonBoolean) {
-                    PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
+                    python.object.PythonInteger number = new python.object.PythonInteger(((PythonBoolean) second).getValue()?1:0);
                     return apply(number, "-");
                 }
                 break;
@@ -49,15 +52,15 @@ public class PythonComplex extends PythonNumber
                 if(second instanceof PythonComplex) {
                     PythonComplex number = (PythonComplex) second;
                     PythonComplex op1 = (PythonComplex) apply(new PythonComplex(number.getValue(), -number.getImgValue()), "*");
-                    double op2 = ((PythonNumber) number.apply(new PythonComplex(number.getValue(), -number.getImgValue()), "*")).getValue();
+                    double op2 = ((python.object.PythonNumber) number.apply(new PythonComplex(number.getValue(), -number.getImgValue()), "*")).getValue();
                     return new PythonComplex(op1.getValue()/op2, op1.getImgValue()/op2);
                 }
-                if(second instanceof PythonNumber) {
-                    PythonNumber number = (PythonNumber) second;
+                if(second instanceof python.object.PythonNumber ) {
+                    python.object.PythonNumber number = (python.object.PythonNumber) second;
                     return apply(new PythonComplex(number.getValue(), 0), "/");
                 }
                 if(second instanceof PythonBoolean) {
-                    PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
+                    python.object.PythonInteger number = new python.object.PythonInteger(((PythonBoolean) second).getValue()?1:0);
                     return apply(number, "/");
                 }
                 break;
@@ -68,12 +71,12 @@ public class PythonComplex extends PythonNumber
                             this.getValue()*number.getValue() - getImgValue()*number.getImgValue(),
                             getImgValue()*number.getImgValue() + number.getValue()*getImgValue());
                 }
-                if(second instanceof PythonNumber) {
-                    PythonNumber number = (PythonNumber) second;
+                if(second instanceof python.object.PythonNumber ) {
+                    python.object.PythonNumber number = (python.object.PythonNumber) second;
                     return apply(new PythonComplex(number.getValue(), 0), "*");
                 }
                 if(second instanceof PythonBoolean) {
-                    PythonInteger number = new PythonInteger(((PythonBoolean) second).getValue()?1:0);
+                    python.object.PythonInteger number = new python.object.PythonInteger(((PythonBoolean) second).getValue()?1:0);
                     return apply(number, "*");
                 }
                 break;
@@ -87,7 +90,7 @@ public class PythonComplex extends PythonNumber
 	}
 
 	@Override
-	public PythonObject apply(String op)
+	public python.object.PythonObject apply(String op)
 	{
 		switch (op)
 		{
@@ -104,7 +107,7 @@ public class PythonComplex extends PythonNumber
 		return null;
 	}
 
-    public PythonBoolean compareTo(PythonObject second, String op)
+    public PythonBoolean compareTo(python.object.PythonObject second, String op)
     {
         switch (op)
         {

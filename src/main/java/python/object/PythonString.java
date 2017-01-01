@@ -1,7 +1,7 @@
-package java.python.object;
+package python.object;
 
-import java.python.error.ExceptionManager;
-import java.python.error.UnsupportedException;
+import python.error.ExceptionManager;
+import python.error.UnsupportedException;
 
 public class PythonString extends PythonObject
 {

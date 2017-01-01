@@ -1,7 +1,6 @@
 package python.statement;
 
 import python.object.PythonBoolean;
-import python.object.ReturnStatement;
 
 import java.util.List;
 
@@ -41,9 +40,10 @@ public class IfStatement extends Statement
 					if(object instanceof ReturnStatement )
 						return object;
 					object = ((Statement)object).run();
-					if(object instanceof LoopBreakType){
-						break;
-					}
+					if ( object == LoopBreakType.CONTINUE )
+						return new ContinueStatement();
+					if ( object == LoopBreakType.BREAK )
+						return new BreakStatement();
 				}
 			}
 		}
@@ -53,9 +53,10 @@ public class IfStatement extends Statement
 				if(object instanceof ReturnStatement )
 					return object;
 				object = ((Statement)object).run();
-				if(object instanceof LoopBreakType){
-					break;
-				}
+				if ( object == LoopBreakType.CONTINUE )
+					return new ContinueStatement();
+				if ( object == LoopBreakType.BREAK )
+					return new BreakStatement();
 			}
 		}
 		return this;

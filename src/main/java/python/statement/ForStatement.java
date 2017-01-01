@@ -2,7 +2,6 @@ package python.statement;
 
 import python.object.ExpressionTree;
 import python.object.PythonIterator;
-import python.object.ReturnStatement;
 import python.scope.SymbolTable;
 
 import java.util.ArrayList;
