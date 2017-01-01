@@ -59,7 +59,7 @@ public class PythonBoolean extends python.object.PythonObject
                 if(second instanceof python.object.PythonComplex )
                 {
                     python.object.PythonComplex thisAsComplex = new python.object.PythonComplex(integer.getValue(), 0);
-                    return thisAsComplex.apply(number, "/");
+                    return integer.apply(thisAsComplex, "/");
                 }
                 if(second instanceof PythonBoolean){
                     python.object.PythonInteger bool = new python.object.PythonInteger(((PythonBoolean) second).getValue()?1:0);
