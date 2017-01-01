@@ -1,5 +1,7 @@
 package python.statement;
 
+import python.object.ReturnStatement;
+
 import java.util.List;
 
 public class StatementBlock extends Statement
@@ -11,7 +13,11 @@ public class StatementBlock extends Statement
 	}
 	@Override
 	public Object run() {
-		statements.forEach(Statement::run);
+		for (int i = 0; i < statements.size(); i++) {
+			if(statements.get(i) instanceof ReturnStatement)
+				return statements.get(i);
+			statements.get(i).run();
+		}
 		return statements;
 	}
 	

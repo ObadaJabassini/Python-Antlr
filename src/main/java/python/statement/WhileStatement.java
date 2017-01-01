@@ -1,7 +1,7 @@
 package python.statement;
 
 import python.object.PythonBoolean;
-import python.object.PythonReturn;
+import python.object.ReturnStatement;
 
 import java.util.List;
 
@@ -21,10 +21,11 @@ public class WhileStatement extends Statement
 		List<Statement> statements = body.getStatements();
 		while (((PythonBoolean) conditionStatement.run()).getValue()) {
 			for (int i = 0; i < statements.size() && !isFinished; i++) {
-				Object res = statements.get(i).run();
-				if ( res instanceof PythonReturn ) {
-					return ((PythonReturn) res).run();
+				Object res = statements.get(i);
+				if ( res instanceof ReturnStatement ) {
+					return res;
 				}
+				res = ((Statement)res).run();
 				if ( res == LoopBreakType.BREAK ) {
 					isFinished = true;
 				}

@@ -108,7 +108,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitRaise_stmt(@NotNull Python3Parser.Raise_stmtContext ctx) {
-		return new PythonReturn(new TestListStatement(new ArrayList<>()));
+		return new ReturnStatement(new TestListStatement(new ArrayList<>()));
 	}
 	
 	@Override
@@ -188,7 +188,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitReturn_stmt(@NotNull Python3Parser.Return_stmtContext ctx) {
-		return new PythonReturn((TestListStatement)visitTestlist(ctx.testlist()));
+		return new ReturnStatement((TestListStatement)visitTestlist(ctx.testlist()));
 	}
 	
 	@Override

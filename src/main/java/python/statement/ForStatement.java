@@ -2,7 +2,7 @@ package python.statement;
 
 import python.object.ExpressionTree;
 import python.object.PythonIterator;
-import python.object.PythonReturn;
+import python.object.ReturnStatement;
 import python.scope.SymbolTable;
 
 import java.util.ArrayList;
@@ -34,9 +34,10 @@ public class ForStatement extends Statement
 			}
 			for (int j = 0; j < block.getStatements().size(); j++) {
 				Object object = block.getStatements().get(j);
-				if ( object instanceof PythonReturn ) {
-					return ((PythonReturn) object).run();
+				if ( object instanceof ReturnStatement ) {
+					return ((ReturnStatement) object).run();
 				}
+				object = ((Statement)object).run();
 				if ( object == LoopBreakType.BREAK ) {
 					finished = true;
 				}

@@ -3,11 +3,11 @@ package python.object;
 import python.statement.Statement;
 import python.statement.TestListStatement;
 
-public class PythonReturn extends Statement
+public class ReturnStatement extends Statement
 {
 	private TestListStatement statement;
 	
-	public PythonReturn(TestListStatement statement){
+	public ReturnStatement(TestListStatement statement){
 		this.statement = statement;
 	}
 	@Override

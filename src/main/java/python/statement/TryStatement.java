@@ -1,7 +1,7 @@
 package python.statement;
 
 import python.object.PythonError;
-import python.object.PythonReturn;
+import python.object.ReturnStatement;
 
 public class TryStatement extends Statement
 {
@@ -16,24 +16,26 @@ public class TryStatement extends Statement
 	public Object run() {
 		boolean except = false;
 		for (int i = 0; i < tryBlock.getStatements().size(); i++) {
-			Object object = tryBlock.getStatements().get(i).run();
+			Object object = tryBlock.getStatements().get(i);
+			if(object instanceof ReturnStatement ){
+				return object;
+			}
+			((Statement)object).run();
 			if(object instanceof PythonError){
 				except = true;
 				break;
 			}
-			if(object instanceof PythonReturn){
-				return ((PythonReturn)object).run();
-			}
 		}
 		if(except){
 			for (int i = 0; i < exceptBlock.getStatements().size(); i++) {
-				Object object = exceptBlock.getStatements().get(i).run();
+				Object object = tryBlock.getStatements().get(i);
+				if(object instanceof ReturnStatement ){
+					return object;
+				}
+				((Statement)object).run();
 				if(object instanceof PythonError){
 					except = true;
 					break;
-				}
-				if(object instanceof PythonReturn){
-					return ((PythonReturn)object).run();
 				}
 			}
 		}

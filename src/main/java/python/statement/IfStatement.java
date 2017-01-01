@@ -1,7 +1,7 @@
 package python.statement;
 
 import python.object.PythonBoolean;
-import python.object.PythonReturn;
+import python.object.ReturnStatement;
 
 import java.util.List;
 
@@ -24,9 +24,10 @@ public class IfStatement extends Statement
 	public Object run() {
 		if(((PythonBoolean)ifCond.run()).getValue()) {
 			for (int i = 0; i < ifBody.getStatements().size(); i++) {
-				Object object = ifBody.getStatements().get(i).run();
-				if(object instanceof PythonReturn)
-					return ((PythonReturn)object).run();
+				Object object = ifBody.getStatements().get(i);
+				if(object instanceof ReturnStatement )
+					return object;
+				object = ((Statement)object).run();
 				if(object instanceof LoopBreakType){
 					break;
 				}
@@ -37,8 +38,9 @@ public class IfStatement extends Statement
 			if(((PythonBoolean)elifCond.get(i).run()).getValue()){
 				for (int j = 0; j < elifBody.get(i).getStatements().size(); j++) {
 					Object object = elifBody.get(i).getStatements().get(j).run();
-					if(object instanceof PythonReturn)
-						return ((PythonReturn)object).run();
+					if(object instanceof ReturnStatement )
+						return object;
+					object = ((Statement)object).run();
 					if(object instanceof LoopBreakType){
 						break;
 					}
@@ -47,9 +49,10 @@ public class IfStatement extends Statement
 		}
 		if(elseBody != null){
 			for (int i = 0; i < elseBody.getStatements().size(); i++) {
-				Object object = elseBody.getStatements().get(i).run();
-				if(object instanceof PythonReturn)
-					return ((PythonReturn)object).run();
+				Object object = ifBody.getStatements().get(i);
+				if(object instanceof ReturnStatement )
+					return object;
+				object = ((Statement)object).run();
 				if(object instanceof LoopBreakType){
 					break;
 				}

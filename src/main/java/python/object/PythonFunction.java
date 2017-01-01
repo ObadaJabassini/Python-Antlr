@@ -20,9 +20,9 @@ public class PythonFunction extends PythonObject
 		parameters.run();
 		for (int i = 0; i < body.getStatements().size(); i++) {
 			Object object = body.getStatements().get(i).run();
-			if(object instanceof PythonReturn) {
+			if(object instanceof ReturnStatement ) {
 				SymbolTable.getTable().endScope();
-				return (PythonObject) ((PythonReturn) object).run();
+				return (PythonObject) ((ReturnStatement) object).run();
 			}
 		}
 		SymbolTable.getTable().endScope();
