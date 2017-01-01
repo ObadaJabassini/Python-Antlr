@@ -46,7 +46,6 @@ public class SymbolTable
 		currentScope.remove(name);
 	}
 	public void addVariable(String name, PythonObject object, Object... params){
-		System.out.println(object);
 		if(currentScope instanceof GlobalScope || toGlobal.contains(name)){
 			((GlobalScope) currentScope).setGlobalVariable(name, object);
 		}

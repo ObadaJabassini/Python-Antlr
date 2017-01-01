@@ -29,4 +29,9 @@ public class ComparisonStatement extends Statement
 		}
 		return object.apply(not?"!":"");
 	}
+	
+	@Override
+	public String toString() {
+		return ops.toString();
+	}
 }

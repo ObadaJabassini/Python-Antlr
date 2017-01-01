@@ -7,14 +7,11 @@ import java.util.List;
 
 public class BooleanTree extends ExpressionTree
 {
-	private BooleanTree.Node root = new BooleanTree.Node();
+	protected BooleanTree.Node root = new BooleanTree.Node();
 	
 	public void setRoot(Node root) {
+		super.rot.op = root.op;
 		this.root = root;
-	}
-	
-	public Node getRoot() {
-		return root;
 	}
 	
 	public static class Node{
@@ -32,6 +29,10 @@ public class BooleanTree extends ExpressionTree
 		this.root.op = op;
 	}
 	
+	public Node getRoot() {
+		return root;
+	}
+	
 	public void addChild(Node node){
 		this.root.children.add(node);
 	}
@@ -46,5 +47,10 @@ public class BooleanTree extends ExpressionTree
 		if( node.children.size() == 1)
 			return eval(node.children.get(0));
 		return node.children.stream().map(this::eval).reduce((f, s) -> f.apply(s, node.op)).get();
+	}
+	
+	@Override
+	public String toString() {
+		return root.op != null? root.op : root.statement.toString();
 	}
 }

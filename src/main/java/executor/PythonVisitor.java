@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class PythonVisitor implements Python3Visitor<Statement>
 {
 	public Map<String, PythonFunction> functions = new HashMap<>();
+	
 	{
 		List<Statement> statements = new ArrayList<>();
 		PrintStatement printStatement = new PrintStatement();
@@ -47,7 +48,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitArgument(@NotNull Python3Parser.ArgumentContext ctx) {
-		if(ctx.test().size() == 1){
+		if ( ctx.test().size() == 1 ) {
 			return new ArgumentStatement(ArgumentStatement.notExist, (ExpressionTree) visitTest(ctx.test(0)));
 		}
 		return new ArgumentStatement(ctx.test(0).getText(), (ExpressionTree) visitTest(ctx.test(1)));
@@ -74,6 +75,9 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitXor_expr(@NotNull Python3Parser.Xor_exprContext ctx) {
+		if ( ctx.and_expr().size() == 1 ) {
+			return visitAnd_expr(ctx.and_expr(0));
+		}
 		ExpressionTree tree = new ExpressionTree("^");
 		for (int i = 0; i < ctx.and_expr().size(); i++) {
 			tree.addChild((ExpressionTree) visitAnd_expr(ctx.and_expr(i)));
@@ -160,7 +164,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		if ( ctx.FLOAT_NUMBER() != null ) {
 			node.object = new PythonFloat(ctx.FLOAT_NUMBER().getText());
 		}
-		else if(ctx.IMAG_NUMBER() != null){
+		else if ( ctx.IMAG_NUMBER() != null ) {
 			node.object = new PythonComplex(ctx.IMAG_NUMBER().getText());
 		}
 		tree.setRoot(node);
@@ -169,6 +173,9 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitAnd_expr(@NotNull Python3Parser.And_exprContext ctx) {
+		if ( ctx.shift_expr().size() == 1 ) {
+			return visitShift_expr(ctx.shift_expr(0));
+		}
 		ExpressionTree tree = new ExpressionTree("&");
 		for (int i = 0; i < ctx.shift_expr().size(); i++) {
 			tree.addChild((ExpressionTree) visitShift_expr(ctx.shift_expr(i)));
@@ -188,7 +195,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitReturn_stmt(@NotNull Python3Parser.Return_stmtContext ctx) {
-		return new ReturnStatement((TestListStatement)visitTestlist(ctx.testlist()));
+		return new ReturnStatement((TestListStatement) visitTestlist(ctx.testlist()));
 	}
 	
 	@Override
@@ -198,19 +205,19 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFlow_stmt(@NotNull Python3Parser.Flow_stmtContext ctx) {
-		if(ctx.break_stmt() != null){
+		if ( ctx.break_stmt() != null ) {
 			return visitBreak_stmt(ctx.break_stmt());
 		}
-		if(ctx.continue_stmt() != null){
+		if ( ctx.continue_stmt() != null ) {
 			return visitContinue_stmt(ctx.continue_stmt());
 		}
-		if(ctx.return_stmt() != null){
+		if ( ctx.return_stmt() != null ) {
 			return visitReturn_stmt(ctx.return_stmt());
 		}
-		if(ctx.raise_stmt() != null){
+		if ( ctx.raise_stmt() != null ) {
 			return visitRaise_stmt(ctx.raise_stmt());
 		}
-		if(ctx.yield_stmt() != null){
+		if ( ctx.yield_stmt() != null ) {
 			return visitYield_stmt(ctx.yield_stmt());
 		}
 		return null;
@@ -226,7 +233,8 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitOr_test(@NotNull Python3Parser.Or_testContext ctx) {
 		if ( ctx.OR().size() == 0 ) {
-			return visitAnd_test(ctx.and_test(0));
+			Statement statement = visitAnd_test(ctx.and_test(0));
+			return statement;
 		}
 		BooleanTree tree = new BooleanTree("||");
 		for (int i = 0; i < ctx.OR().size(); i++) {
@@ -237,16 +245,20 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitComparison(@NotNull Python3Parser.ComparisonContext ctx) {
-		if(ctx.star_expr().size() == 1){
+		if ( ctx.star_expr().size() == 1 ) {
 			List<ExpressionTree> trees = new ArrayList<>();
 			trees.add((ExpressionTree) visitStar_expr(ctx.star_expr(0)));
-			return new ComparisonStatement(null, trees);
+			return new ComparisonStatement(new ArrayList<>(), trees);
 		}
 		List<String> ops = new ArrayList<>();
 		List<ExpressionTree> trees = new ArrayList<>();
 		trees.add((ExpressionTree) visitStar_expr(ctx.star_expr(0)));
-		for (int i = 0; i < ctx.comp_op().size(); i++) {
-			ops.add(ctx.comp_op(i).getText());
+		trees.add((ExpressionTree) visitStar_expr(ctx.star_expr(1)));
+		String str = ((ContianerStatement) visitComp_op(ctx.comp_op(0))).getValue().toString();
+		ops.add(str);
+		for (int i = 1; i < ctx.comp_op().size(); i++) {
+			str = ((ContianerStatement) visitComp_op(ctx.comp_op(i))).getValue().toString();
+			ops.add(str);
 			trees.add((ExpressionTree) visitStar_expr(ctx.star_expr(i + 1)));
 		}
 		return new ComparisonStatement(ops, trees);
@@ -254,7 +266,8 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTest(@NotNull Python3Parser.TestContext ctx) {
-		return visitOr_test(ctx.or_test(0));
+		Statement statement = visitOr_test(ctx.or_test(0));
+		return statement;
 	}
 	
 	@Override
@@ -289,6 +302,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		}
 		ExpressionTree tree = new ExpressionTree(ctx.opss.get(0).getText());
 		tree.addChild((ExpressionTree) visitArith_expr(ctx.arith_expr(0)));
+		tree.addChild((ExpressionTree) visitArith_expr(ctx.arith_expr(1)));
 		for (int i = 1; i < ctx.opss.size(); i++) {
 			ExpressionTree tree1 = new ExpressionTree(ctx.opss.get(i).getText());
 			tree1.addChild((ExpressionTree) visitArith_expr(ctx.arith_expr(i + 1)));
@@ -340,7 +354,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitComp_op(@NotNull Python3Parser.Comp_opContext ctx) {
-		return Python.none();
+		return new ContianerStatement(ctx.getText());
 	}
 	
 	@Override
@@ -397,7 +411,8 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		if ( ctx.ELSE() != null ) {
 			b = (StatementBlock) visitSuite(ctx.elseSuite);
 		}
-		return new IfStatement((TestStatement) visitTest(ctx.test(0)), (StatementBlock) visitSuite(ctx.suite(0)), b, testStatements, blocks);
+		TestStatement ifTest = (TestStatement) visitTest(ctx.test().get(0));
+		return new IfStatement(ifTest, (StatementBlock) visitSuite(ctx.suite().get(0)), b, testStatements, blocks);
 	}
 	
 	@Override
@@ -420,19 +435,19 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		if ( ctx.global_stmt() != null ) {
 			return visitGlobal_stmt(ctx.global_stmt());
 		}
-		if( ctx.expr_stmt() != null) {
+		if ( ctx.expr_stmt() != null ) {
 			return visitExpr_stmt(ctx.expr_stmt());
 		}
-		if(ctx.flow_stmt() != null){
+		if ( ctx.flow_stmt() != null ) {
 			return visitFlow_stmt(ctx.flow_stmt());
 		}
-		if(ctx.global_stmt() != null){
+		if ( ctx.global_stmt() != null ) {
 			return visitGlobal_stmt(ctx.global_stmt());
 		}
-		if(ctx.pass_stmt() != null){
+		if ( ctx.pass_stmt() != null ) {
 			return visitPass_stmt(ctx.pass_stmt());
 		}
-		if(ctx.del_stmt() != null){
+		if ( ctx.del_stmt() != null ) {
 			return visitDel_stmt(ctx.del_stmt());
 		}
 		return null;
@@ -455,6 +470,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		}
 		ExpressionTree tree = new ExpressionTree(ctx.opss.get(0).getText());
 		tree.addChild((ExpressionTree) visitTerm(ctx.term(0)));
+		tree.addChild((ExpressionTree) visitTerm(ctx.term(1)));
 		for (int i = 1; i < ctx.opss.size(); i++) {
 			ExpressionTree tree1 = new ExpressionTree(ctx.opss.get(i).getText());
 			tree1.addChild((ExpressionTree) visitTerm(ctx.term(i + 1)));
@@ -500,6 +516,9 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitExpr(@NotNull Python3Parser.ExprContext ctx) {
+		if ( ctx.xor_expr().size() == 1 ) {
+			return visitXor_expr(ctx.xor_expr(0));
+		}
 		ExpressionTree tree = new ExpressionTree("|");
 		for (int i = 0; i < ctx.xor_expr().size(); i++) {
 			tree.addChild((ExpressionTree) visitXor_expr(ctx.xor_expr(i)));
@@ -514,6 +533,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		}
 		ExpressionTree tree = new ExpressionTree(ctx.opss.get(0).getText());
 		tree.addChild((ExpressionTree) visitFactor(ctx.factor(0)));
+		tree.addChild((ExpressionTree) visitFactor(ctx.factor(1)));
 		for (int i = 1; i < ctx.opss.size(); i++) {
 			ExpressionTree tree1 = new ExpressionTree(ctx.opss.get(i).getText());
 			tree1.addChild((ExpressionTree) visitFactor(ctx.factor(i + 1)));
@@ -524,7 +544,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitPower(@NotNull Python3Parser.PowerContext ctx) {
-		if(ctx.trailer().size() != 0){
+		if ( ctx.trailer().size() != 0 ) {
 			ExpressionTree tree = new ExpressionTree(null);
 			ExpressionTree.Node node = new ExpressionTree.Node();
 			PythonFunction function = functions.get(ctx.atom().getText());
@@ -575,7 +595,8 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTest_nocond(@NotNull Python3Parser.Test_nocondContext ctx) {
-		return visitOr_test(ctx.or_test());
+		Statement statement = visitOr_test(ctx.or_test());
+		return statement;
 	}
 	
 	@Override
@@ -622,8 +643,9 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
 		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
 		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
-		if(ctx.augassign() == null)
+		if ( ctx.augassign() == null ) {
 			return new AssignStatement(names, statement.getTrees());
+		}
 		return new AugAssignStatement(ctx.augassign().getText(), names, statement.getTrees());
 	}
 	
@@ -639,7 +661,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSuite(@NotNull Python3Parser.SuiteContext ctx) {
-		if(ctx.simple_stmt() != null){
+		if ( ctx.simple_stmt() != null ) {
 			return new StatementBlock(new ArrayList<>(Collections.singletonList(visitSimple_stmt(ctx.simple_stmt()))));
 		}
 		List<Statement> statements = new ArrayList<>();

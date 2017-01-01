@@ -21,6 +21,7 @@ public class IfStatement extends Statement
 	
 	@Override
 	public Object run() {
+		System.out.println(ifCond.run());
 		if(((PythonBoolean)ifCond.run()).getValue()) {
 			for (int i = 0; i < ifBody.getStatements().size(); i++) {
 				Object object = ifBody.getStatements().get(i);

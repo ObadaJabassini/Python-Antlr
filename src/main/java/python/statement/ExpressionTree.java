@@ -7,10 +7,10 @@ import java.util.List;
 
 public class ExpressionTree extends Statement
 {
-	private Node root = new Node();
+	protected Node rot = new Node();
 	@Override
 	public Object run() {
-		return eval(root);
+		return eval(rot);
 	}
 	
 	public static class Node{
@@ -21,19 +21,19 @@ public class ExpressionTree extends Statement
 	}
 	
 	public ExpressionTree(String op){
-		this.root.op = op;
+		this.rot.op = op;
 	}
 	
-	public void setRoot(Node root){
-		this.root = root;
+	public void setRoot(Node rot){
+		this.rot = rot;
 	}
 	
 	public void setSpeical(String sp){
-		this.root.speical = sp;
+		this.rot.speical = sp;
 	}
 	
 	public void addChild(ExpressionTree tree){
-		this.root.children.add(tree.root);
+		this.rot.children.add(tree.rot);
 	}
 	
 	private PythonObject eval(Node node){
@@ -44,5 +44,10 @@ public class ExpressionTree extends Statement
 			return eval(node.children.get(0)).apply(node.speical);
 		}
 		return node.children.stream().map(this::eval).reduce((f, s) -> f.apply(s, node.op)).get().apply(node.speical);
+	}
+	
+	@Override
+	public String toString() {
+		return rot.op != null? rot.op : rot.object.toString();
 	}
 }

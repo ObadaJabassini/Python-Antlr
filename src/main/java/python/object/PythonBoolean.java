@@ -209,7 +209,7 @@ public class PythonBoolean extends python.object.PythonObject
                 return new python.object.PythonInteger(getValue()?1:0);
         }
         ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
-        return null;
+        return this;
     }
 
 }
