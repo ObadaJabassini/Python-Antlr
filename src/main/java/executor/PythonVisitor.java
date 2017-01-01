@@ -418,6 +418,21 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		if ( ctx.global_stmt() != null ) {
 			return visitGlobal_stmt(ctx.global_stmt());
 		}
+		if( ctx.expr_stmt() != null) {
+			return visitExpr_stmt(ctx.expr_stmt());
+		}
+		if(ctx.flow_stmt() != null){
+			return visitFlow_stmt(ctx.flow_stmt());
+		}
+		if(ctx.global_stmt() != null){
+			return visitGlobal_stmt(ctx.global_stmt());
+		}
+		if(ctx.pass_stmt() != null){
+			return visitPass_stmt(ctx.pass_stmt());
+		}
+		if(ctx.del_stmt() != null){
+			return visitDel_stmt(ctx.del_stmt());
+		}
 		return null;
 	}
 	
@@ -459,7 +474,8 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	public Statement visitSimple_stmt(@NotNull Python3Parser.Simple_stmtContext ctx) {
 		List<Statement> statements = new ArrayList<>();
 		for (int i = 0; i < ctx.small_stmt().size(); i++) {
-			statements.add(visitSmall_stmt(ctx.small_stmt(i)));
+			Statement statement = visitSmall_stmt(ctx.small_stmt(i));
+			statements.add(statement);
 		}
 		return new StatementBlock(statements);
 	}
@@ -557,7 +573,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTest_nocond(@NotNull Python3Parser.Test_nocondContext ctx) {
-		return null;
+		return visitOr_test(ctx.or_test());
 	}
 	
 	@Override
@@ -603,6 +619,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
 		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
+		System.out.println(names);
 		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
 		if(ctx.augassign() != null)
 			return new AssignStatement(names, statement.getTrees());
