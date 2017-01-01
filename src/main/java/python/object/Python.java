@@ -19,12 +19,6 @@ public class Python
 		private PythonNil(){
 			
 		}
-		
-		@Override
-		public PythonBoolean compareTo(PythonObject second, String op) {
-			throw new RuntimeException("none");
-		}
-		
 		@Override
 		public PythonObject apply(PythonObject second, String op) {
 			throw new RuntimeException("none");
