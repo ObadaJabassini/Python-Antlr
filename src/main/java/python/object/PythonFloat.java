@@ -96,7 +96,7 @@ public class PythonFloat extends python.object.PythonNumber
 				return new PythonFloat(this.getValue());
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
-		return null;
+		return this;
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class PythonFloat extends python.object.PythonNumber
 				return new PythonFloat(this.getValue());
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
-		return null;
+		return this;
 	}
 
     public PythonBoolean compareTo(python.object.PythonObject second, String op)

@@ -18,7 +18,8 @@ public class AssignStatement extends Statement
 	@Override
 	public Object run() {
 		for (int i = 0; i < names.size(); i++) {
-			SymbolTable.getTable().addVariable(names.get(i), (PythonObject) trees.get(i).run(), "local");
+			PythonObject res = (PythonObject) trees.get(i).run();
+			SymbolTable.getTable().addVariable(names.get(i), res, "local");
 		}
 		return this;
 	}

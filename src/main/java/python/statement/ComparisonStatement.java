@@ -22,7 +22,6 @@ public class ComparisonStatement extends Statement
 	
 	@Override
 	public Object run() {
-		System.out.println(trees.size());
 		if(trees.size() == 1)
 			return ((PythonObject)trees.get(0).run()).apply(not?"!":"");
 		PythonBoolean pythonBoolean = (PythonBoolean) ((PythonObject)trees.get(0).run()).apply((PythonObject)trees.get(1).run(), ops.get(0));

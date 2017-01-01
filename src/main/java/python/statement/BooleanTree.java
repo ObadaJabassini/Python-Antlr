@@ -1,6 +1,6 @@
 package python.statement;
 
-import python.object.PythonBoolean;
+import python.object.PythonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +40,11 @@ public class BooleanTree extends ExpressionTree
 		this.root.children.add(tree.root);
 	}
 	
-	private PythonBoolean eval(Node node){
+	private PythonObject eval(Node node){
 		if(node.statement != null)
-			return (PythonBoolean) node.statement.run();
+			return (PythonObject) node.statement.run();
 		if( node.children.size() == 1)
 			return eval(node.children.get(0));
-		return node.children.stream().map(this::eval).reduce((f, s) -> (PythonBoolean) f.apply(s, node.op)).get();
+		return node.children.stream().map(this::eval).reduce((f, s) -> f.apply(s, node.op)).get();
 	}
 }

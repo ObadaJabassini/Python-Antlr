@@ -40,7 +40,7 @@ public class PythonString extends PythonObject
 				return new PythonString(getValue());
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
-		return null;
+		return this;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class PythonString extends PythonObject
 				return new PythonBoolean(false);
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
-		return null;
+		return this;
 	}
 
 	public PythonBoolean compareTo(PythonObject second, String op)
@@ -104,5 +104,10 @@ public class PythonString extends PythonObject
 		}
 		ExceptionManager.getManager().add(new UnsupportedException(0, 0, "Unsupported operation"));
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		return value;
 	}
 }
