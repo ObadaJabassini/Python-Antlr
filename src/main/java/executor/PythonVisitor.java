@@ -678,7 +678,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 			return tree;
 		}
 		if ( ctx.NONE() != null ) {
-			return null;
+			return Python.none();
 		}
 		if ( ctx.NAME() != null ) {
 			return SymbolTable.getTable().lookup(ctx.NAME().getText());
@@ -692,10 +692,10 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitStmt(@NotNull Python3Parser.StmtContext ctx) {
 		if ( ctx.compound_stmt() != null ) {
-			return visitSimple_stmt(ctx.simple_stmt());
+			return visitCompound_stmt(ctx.compound_stmt());
 		}
 		else {
-			return visitCompound_stmt(ctx.compound_stmt());
+			return visitSimple_stmt(ctx.simple_stmt());
 		}
 	}
 	
