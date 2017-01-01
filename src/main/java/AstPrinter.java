@@ -15,7 +15,7 @@ public class AstPrinter {
     }
 
     private void visit(RuleContext ctx, int indentation) {
-    	//ctx.accept(new Visitor());
+    	//ctx.accept(new PythonVisitor());
 	    String ruleName = Python3Parser.ruleNames[ctx.getRuleIndex()];
 	    for (int i=0;i<indentation;i++) {
 		    System.out.print("  ");

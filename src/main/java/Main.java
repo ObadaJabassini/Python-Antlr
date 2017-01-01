@@ -1,10 +1,9 @@
 import executor.Python3Lexer;
 import executor.Python3Parser;
-import executor.Visitor;
+import executor.PythonVisitor;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import python.statement.StatementBlock;
 
 import java.io.*;
 
@@ -20,9 +19,8 @@ public class Main
 	    final CommonTokenStream tokens = new CommonTokenStream(lexer);
 	    final Python3Parser parser = new Python3Parser(tokens);
 	    final ParseTree tree = parser.prog();
-	    Visitor visitor = new Visitor();
-	    StatementBlock program = (StatementBlock) visitor.visit(tree);
-	    program.run();
+	    PythonVisitor pythonVisitor = new PythonVisitor();
+	    System.out.println(pythonVisitor.visit(tree));
 //	    final List<String> ruleNames = Arrays.asList(Python3Parser.ruleNames);
 //	    final TreeViewer view = new TreeViewer(ruleNames, tree);
 //	    view.open();

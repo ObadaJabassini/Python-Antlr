@@ -12,9 +12,9 @@ import python.statement.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Visitor implements Python3Visitor<Statement>
+public class PythonVisitor implements Python3Visitor<Statement>
 {
-	private Map<String, PythonFunction> functions = new HashMap<>();
+	public Map<String, PythonFunction> functions = new HashMap<>();
 	{
 		List<Statement> statements = new ArrayList<>();
 		PrintStatement printStatement = new PrintStatement();
@@ -55,7 +55,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitNot_test(@NotNull Python3Parser.Not_testContext ctx) {
-		if ( ctx.NOT().getText().equals("") ) {
+		if ( ctx.NOT() != null ) {
 			BooleanTree tree = new BooleanTree(null);
 			BooleanTree.Node node = new BooleanTree.Node();
 			node.statement = (ComparisonStatement) visitComparison(ctx.comparison());
@@ -123,28 +123,28 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitCompound_stmt(@NotNull Python3Parser.Compound_stmtContext ctx) {
-		if ( !ctx.if_stmt().getText().equals("") ) {
+		if ( ctx.if_stmt() != null ) {
 			return visitIf_stmt(ctx.if_stmt());
 		}
-		if ( !ctx.while_stmt().getText().equals("") ) {
+		if ( ctx.while_stmt() != null ) {
 			return visitWhile_stmt(ctx.while_stmt());
 		}
-		if ( !ctx.for_stmt().getText().equals("") ) {
+		if ( ctx.for_stmt() != null ) {
 			return visitFor_stmt(ctx.for_stmt());
 		}
-		if ( !ctx.try_stmt().getText().equals("") ) {
+		if ( ctx.try_stmt() != null ) {
 			return visitTry_stmt(ctx.try_stmt());
 		}
-		if ( !ctx.classdef().getText().equals("") ) {
+		if ( ctx.classdef() != null ) {
 			return visitClassdef(ctx.classdef());
 		}
-		if ( !ctx.funcdef().getText().equals("") ) {
+		if ( ctx.funcdef() != null ) {
 			return visitFuncdef(ctx.funcdef());
 		}
-		if ( !ctx.with_stmt().getText().equals("") ) {
+		if ( ctx.with_stmt() != null ) {
 			return visitWith_stmt(ctx.with_stmt());
 		}
-		if ( !ctx.decorated().getText().equals("") ) {
+		if ( ctx.decorated() != null ) {
 			return visitDecorated(ctx.decorated());
 		}
 		return null;
@@ -154,10 +154,10 @@ public class Visitor implements Python3Visitor<Statement>
 	public Statement visitNumber(@NotNull Python3Parser.NumberContext ctx) {
 		ExpressionTree tree = new ExpressionTree(null);
 		ExpressionTree.Node node = new ExpressionTree.Node();
-		if ( !ctx.integer().getText().equals("") ) {
+		if ( ctx.integer() != null ) {
 			node.object = new PythonInteger(ctx.integer().getText());
 		}
-		if ( !ctx.FLOAT_NUMBER().getText().equals("") ) {
+		if ( ctx.FLOAT_NUMBER() != null ) {
 			node.object = new PythonFloat(ctx.FLOAT_NUMBER().getText());
 		}
 		else {
@@ -198,19 +198,19 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFlow_stmt(@NotNull Python3Parser.Flow_stmtContext ctx) {
-		if(!ctx.break_stmt().getText().equals("")){
+		if(ctx.break_stmt() != null){
 			return visitBreak_stmt(ctx.break_stmt());
 		}
-		if(!ctx.continue_stmt().getText().equals("")){
+		if(ctx.continue_stmt() != null){
 			return visitContinue_stmt(ctx.continue_stmt());
 		}
-		if(!ctx.return_stmt().getText().equals("")){
+		if(ctx.return_stmt() != null){
 			return visitReturn_stmt(ctx.return_stmt());
 		}
-		if(!ctx.raise_stmt().getText().equals("")){
+		if(ctx.raise_stmt() != null){
 			return visitRaise_stmt(ctx.raise_stmt());
 		}
-		if(!ctx.yield_stmt().getText().equals("")){
+		if(ctx.yield_stmt() != null){
 			return visitYield_stmt(ctx.yield_stmt());
 		}
 		return null;
@@ -353,7 +353,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitParameters(@NotNull Python3Parser.ParametersContext ctx) {
-		if ( ctx.typedargslist().getText().equals("") ) {
+		if ( ctx.typedargslist() != null ) {
 			return new ParametersStatement(new LinkedHashMap<>());
 		}
 		return visitTypedargslist(ctx.typedargslist());
@@ -392,7 +392,7 @@ public class Visitor implements Python3Visitor<Statement>
 			blocks.add((StatementBlock) visitSuite(ctx.suite(i + 1)));
 		}
 		StatementBlock b = null;
-		if ( !ctx.ELSE().getText().equals("") ) {
+		if ( ctx.ELSE() != null ) {
 			b = (StatementBlock) visitSuite(ctx.elseSuite);
 		}
 		return new IfStatement((TestStatement) visitTest(ctx.test(0)), (StatementBlock) visitSuite(ctx.suite(0)), b, testStatements, blocks);
@@ -415,7 +415,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSmall_stmt(@NotNull Python3Parser.Small_stmtContext ctx) {
-		if ( !ctx.global_stmt().getText().equals("") ) {
+		if ( ctx.global_stmt() != null ) {
 			return visitGlobal_stmt(ctx.global_stmt());
 		}
 		return null;
@@ -467,7 +467,7 @@ public class Visitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitTypedargslist(@NotNull Python3Parser.TypedargslistContext ctx) {
 		Map<String, ExpressionTree> map = new HashMap<>();
-		if ( !ctx.test(0).getText().equals("") ) {
+		if ( ctx.test(0) != null ) {
 			map.put(ctx.tfpdef(0).NAME().getText(), (ExpressionTree) visitTest(ctx.test(0)));
 		}
 		for (int i = 1; i < ctx.tfpdef().size(); i++) {
@@ -527,7 +527,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitFactor(@NotNull Python3Parser.FactorContext ctx) {
-		if ( !ctx.power().getText().equals("") ) {
+		if ( ctx.power() != null ) {
 			return visitPower(ctx.power());
 		}
 		ExpressionTree tree = (ExpressionTree) visitFactor(ctx.factor());
@@ -604,7 +604,7 @@ public class Visitor implements Python3Visitor<Statement>
 	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
 		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
 		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
-		if(ctx.augassign().getText().equals(""))
+		if(ctx.augassign() != null)
 			return new AssignStatement(names, statement.getTrees());
 		return new AugAssignStatement(ctx.augassign().getText(), names, statement.getTrees());
 	}
@@ -621,7 +621,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitSuite(@NotNull Python3Parser.SuiteContext ctx) {
-		if(!ctx.simple_stmt().getText().equals("")){
+		if(ctx.simple_stmt() != null){
 			return new StatementBlock(new ArrayList<>(Collections.singletonList(visitSimple_stmt(ctx.simple_stmt()))));
 		}
 		List<Statement> statements = new ArrayList<>();
@@ -663,27 +663,27 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitAtom(@NotNull Python3Parser.AtomContext ctx) {
-		if ( !ctx.FALSE().getText().equals("") ) {
+		if ( ctx.FALSE() != null ) {
 			ExpressionTree tree = new ExpressionTree(null);
 			ExpressionTree.Node node = new ExpressionTree.Node();
 			node.object = new PythonBoolean(false);
 			tree.setRoot(node);
 			return tree;
 		}
-		if ( !ctx.TRUE().getText().equals("") ) {
+		if ( ctx.TRUE() != null ) {
 			ExpressionTree tree = new ExpressionTree(null);
 			ExpressionTree.Node node = new ExpressionTree.Node();
 			node.object = new PythonBoolean(true);
 			tree.setRoot(node);
 			return tree;
 		}
-		if ( !ctx.NONE().getText().equals("") ) {
+		if ( ctx.NONE() != null ) {
 			return null;
 		}
-		if ( !ctx.NAME().getText().equals("") ) {
+		if ( ctx.NAME() != null ) {
 			return SymbolTable.getTable().lookup(ctx.NAME().getText());
 		}
-		if ( !ctx.number().getText().equals("") ) {
+		if ( ctx.number() != null ) {
 			return visitNumber(ctx.number());
 		}
 		return visitString(ctx.string(0));
@@ -691,7 +691,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitStmt(@NotNull Python3Parser.StmtContext ctx) {
-		if ( ctx.compound_stmt().getText().equals("") ) {
+		if ( ctx.compound_stmt() != null ) {
 			return visitSimple_stmt(ctx.simple_stmt());
 		}
 		else {
@@ -701,7 +701,7 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visit(@NotNull ParseTree tree) {
-		return null;
+		return tree.accept(this);
 	}
 	
 	@Override
