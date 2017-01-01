@@ -21,7 +21,7 @@ public class Main
 	    final ParseTree tree = parser.prog();
 	    PythonVisitor pythonVisitor = new PythonVisitor();
 	    System.out.println(tree.toStringTree(parser));
-	    //pythonVisitor.visit(tree).run();
+	    pythonVisitor.visit(tree).run();
 //	    final List<String> ruleNames = Arrays.asList(Python3Parser.ruleNames);
 //	    final TreeViewer view = new TreeViewer(ruleNames, tree);
 //	    view.open();

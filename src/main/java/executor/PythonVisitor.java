@@ -55,7 +55,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitNot_test(@NotNull Python3Parser.Not_testContext ctx) {
-		if ( ctx.NOT() != null ) {
+		if ( ctx.not_test() == null ) {
 			BooleanTree tree = new BooleanTree(null);
 			BooleanTree.Node node = new BooleanTree.Node();
 			node.statement = (ComparisonStatement) visitComparison(ctx.comparison());
@@ -83,7 +83,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitInteger(@NotNull Python3Parser.IntegerContext ctx) {
-		return null;
+		return new PythonInteger(ctx.getText());
 	}
 	
 	@Override
@@ -155,12 +155,12 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		ExpressionTree tree = new ExpressionTree(null);
 		ExpressionTree.Node node = new ExpressionTree.Node();
 		if ( ctx.integer() != null ) {
-			node.object = new PythonInteger(ctx.integer().getText());
+			node.object = (PythonObject) visitInteger(ctx.integer());
 		}
 		if ( ctx.FLOAT_NUMBER() != null ) {
 			node.object = new PythonFloat(ctx.FLOAT_NUMBER().getText());
 		}
-		else {
+		else if(ctx.IMAG_NUMBER() != null){
 			node.object = new PythonComplex(ctx.IMAG_NUMBER().getText());
 		}
 		tree.setRoot(node);
@@ -621,7 +621,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
 		System.out.println(names);
 		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
-		if(ctx.augassign() != null)
+		if(ctx.augassign() == null)
 			return new AssignStatement(names, statement.getTrees());
 		return new AugAssignStatement(ctx.augassign().getText(), names, statement.getTrees());
 	}

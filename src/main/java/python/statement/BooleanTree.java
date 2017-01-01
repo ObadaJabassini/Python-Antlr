@@ -5,7 +5,7 @@ import python.object.PythonBoolean;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BooleanTree extends Statement
+public class BooleanTree extends ExpressionTree
 {
 	private BooleanTree.Node root = new BooleanTree.Node();
 	
@@ -28,6 +28,7 @@ public class BooleanTree extends Statement
 	}
 	
 	public BooleanTree(String op){
+		super(null);
 		this.root.op = op;
 	}
 	
