@@ -1,57 +1,34 @@
 package python.statement;
 
+import python.object.ExpressionTree;
 import python.object.PythonBoolean;
-import python.object.PythonComparable;
 import python.object.PythonObject;
 
 import java.util.List;
 
 public class ComparisonStatement extends Statement
 {
-	private List<String> ops;
-	private List<ExpressionStatement> statements;
 	private boolean not = false;
+	private List<String> ops;
+	private List<ExpressionTree> trees;
 	
-	public ComparisonStatement(List<String> ops, List<ExpressionStatement> statements) {
+	public ComparisonStatement(List<String> ops, List<ExpressionTree> trees) {
 		this.ops = ops;
-		this.statements = statements;
+		this.trees = trees;
+	}
+	
+	public void flipNot(){
+		this.not = !this.not;
 	}
 	
 	@Override
 	public Object run() {
-		for (int i = 0; i < ops.size(); i++) {
-			if(!((PythonComparable)statements.get(i).run()).compareTo((PythonObject) statements.get(i + 1).run(), ops.get(i)).getValue()){
-				return new PythonBoolean(false);
-			}
+		if(trees.size() == 1)
+			return ((PythonBoolean)trees.get(0).run()).apply(not?"!":"");
+		PythonBoolean pythonBoolean = (PythonBoolean) ((PythonObject)trees.get(0).run()).apply((PythonObject)trees.get(1).run(), ops.get(0));
+		for (int i = 1; i < ops.size(); i++) {
+			pythonBoolean = (PythonBoolean) pythonBoolean.apply((PythonObject) trees.get(i + 1).run(), ops.get(i));
 		}
-		return new PythonBoolean(true);
-	}
-	
-	public List<String> getOps() {
-		return ops;
-	}
-	
-	public void setOps(List<String> ops) {
-		this.ops = ops;
-	}
-	
-	public List<ExpressionStatement> getStatements() {
-		return statements;
-	}
-	
-	public void setStatements(List<ExpressionStatement> statements) {
-		this.statements = statements;
-	}
-	
-	public void setNot(boolean not){
-		this.not = not;
-	}
-	
-	public boolean getNot(){
-		return not;
-	}
-	
-	public void flipNot() {
-		this.not = !this.not;
+		return pythonBoolean.apply(not?"!":"");
 	}
 }

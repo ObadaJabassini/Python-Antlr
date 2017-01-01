@@ -1,30 +1,26 @@
 package python.statement;
 
+import python.object.ExpressionTree;
 import python.object.PythonObject;
 import python.scope.SymbolTable;
 
+import java.util.List;
+
 public class AssignStatement extends Statement
 {
-	private String variableName = "";
-	private PythonObject object;
+	private List<String> names;
+	private List<ExpressionTree> trees;
+	
+	public AssignStatement(List<String> names, List<ExpressionTree> trees) {
+		this.names = names;
+		this.trees = trees;
+	}
+	
 	@Override
-	public void run() {
-		SymbolTable.getTable().addVariable(variableName, object, "local");
-	}
-	
-	public String getVariableName() {
-		return variableName;
-	}
-	
-	public void setVariableName(String variableName) {
-		this.variableName = variableName;
-	}
-	
-	public PythonObject getObject() {
-		return object;
-	}
-	
-	public void setObject(PythonObject object) {
-		this.object = object;
+	public Object run() {
+		for (int i = 0; i < names.size(); i++) {
+			SymbolTable.getTable().addVariable(names.get(i), (PythonObject) trees.get(i).run(), "local");
+		}
+		return this;
 	}
 }

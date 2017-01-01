@@ -219,23 +219,17 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitComparison(@NotNull Python3Parser.ComparisonContext ctx) {
-		if ( ctx.comp_op().size() == 0 ) {
-			return new ComparisonStatement(new ArrayList<String>()
-			{{
-				add("");
-			}}, new ArrayList<ExpressionStatement>()
-			{{
-				add((ExpressionStatement) visitStar_expr(ctx.star_expr(0)));
-			}});
+		if(ctx.star_expr().size() == 1){
+			return new ComparisonStatement(null, new ArrayList<ExpressionTree>() {{visitStar_expr(ctx.star_expr(0));}});
 		}
 		List<String> ops = new ArrayList<>();
-		List<ExpressionStatement> statements = new ArrayList<>();
-		statements.add((ExpressionStatement) visitStar_expr(ctx.star_expr(0)));
+		List<ExpressionTree> trees = new ArrayList<>();
+		trees.add((ExpressionTree) visitStar_expr(ctx.star_expr(0)));
 		for (int i = 0; i < ctx.comp_op().size(); i++) {
 			ops.add(ctx.comp_op(i).getText());
-			statements.add((ExpressionStatement) visitStar_expr(ctx.star_expr(i + 1)));
+			trees.add((ExpressionTree) visitStar_expr(ctx.star_expr(i + 1)));
 		}
-		return new ComparisonStatement(ops, statements);
+		return new ComparisonStatement(ops, trees);
 	}
 	
 	@Override
@@ -575,7 +569,9 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
-		return null;
+		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
+		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
+		return new AssignStatement(names, statement.getTrees());
 	}
 	
 	@Override
@@ -604,7 +600,9 @@ public class Visitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTestlist_star_expr(@NotNull Python3Parser.Testlist_star_exprContext ctx) {
-		return null;
+		List<ExpressionTree> trees = new ArrayList<>();
+		ctx.test().forEach(testContext -> trees.add((ExpressionTree) visitTest(testContext)));
+		return new TestListStatement(trees);
 	}
 	
 	@Override
