@@ -27,4 +27,14 @@ public class GlobalScope extends Scope
 		}
 		return globalVariables.get(name);
 	}
+	
+	@Override
+	public void remove(String name) {
+		this.globalVariables.remove(name);
+	}
+	
+	@Override
+	public String toString() {
+		return globalVariables.toString();
+	}
 }

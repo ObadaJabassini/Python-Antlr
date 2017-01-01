@@ -66,4 +66,9 @@ public class FunctionScope extends Scope
 	public void remove(String name) {
 		locals.remove(name);
 	}
+	
+	@Override
+	public String toString() {
+		return locals.toString();
+	}
 }
