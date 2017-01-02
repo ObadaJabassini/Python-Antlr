@@ -29,7 +29,7 @@ public class PythonDictionary extends PythonTraverse{
 		return new PythonDictionaryIterator(objects);
 	}
 	
-	public class PythonDictionaryIterator extends PythonIterator{
+	public static class PythonDictionaryIterator extends PythonIterator{
 		private List<String> keys;
 		private List<PythonObject> objects;
 		private int i = 0;

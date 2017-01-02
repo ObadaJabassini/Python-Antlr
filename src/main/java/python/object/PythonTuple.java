@@ -19,7 +19,7 @@ public class PythonTuple extends PythonTraverse{
 	
 	@Override
 	public PythonIterator iterator() {
-		return new PythonIterator(objects);
+		return new PythonList.PythonListIterator(objects);
 	}
 	
 	    public List<PythonObject> getValue() { return objects; }

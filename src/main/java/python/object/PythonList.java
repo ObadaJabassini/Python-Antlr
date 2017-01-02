@@ -71,7 +71,7 @@ public class PythonList extends PythonTraverse
         return new PythonListIterator(objects);
     }
     
-    public class PythonListIterator extends PythonIterator{
+    public static class PythonListIterator extends PythonIterator{
     	
     	private int i = 0;
     	private List<PythonObject> objects;
