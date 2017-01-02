@@ -85,7 +85,7 @@ public class Main
 	}
 
 	//GUI
-	public main() {
+	public Main() {
 		liseners();
 	}
 	private void liseners(){
