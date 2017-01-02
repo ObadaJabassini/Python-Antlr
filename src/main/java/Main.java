@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFileChooser;
 import java.io.File;
+import javax.swing.*;
+import javax.swing.text.*;
 
 
 public class Main
@@ -104,6 +106,17 @@ public class Main
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
 					Path.setText("Selected file: " + selectedFile.getAbsolutePath());
+					File selectedFile = fileChooser.getSelectedFile();
+					try
+					{
+						FileWriter writer = new FileWriter(selectedFile);
+						BufferedWriter bw = new BufferedWriter( writer );
+						textArea1.write( bw );
+						bw.close();
+						textArea1.setText("");
+						textArea1.requestFocus();
+					}
+					catch(Exception e2) {}
 				}
 			}
 		});
