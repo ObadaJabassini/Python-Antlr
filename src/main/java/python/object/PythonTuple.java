@@ -1,6 +1,8 @@
 package python.object;
-import java.python.error.ExceptionManager;
-import java.python.error.UnsupportedException;
+
+import python.error.ExceptionManager;
+import python.error.UnsupportedException;
+
 import java.util.ArrayList;
 import java.util.List;
 

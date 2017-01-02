@@ -20,66 +20,36 @@ public class PythonFloat extends python.object.PythonNumber
         switch (op)
         {
             case "==":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(bool, "==");
-                }
                 if(second instanceof  PythonComplex){
                     return new PythonBoolean(false);}
                 if(second instanceof PythonNumber){
                     return new PythonBoolean(getValue() == ((PythonNumber) second).getValue());}
                 break;
             case "!=":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(bool, "!=");
-                }
                 if(second instanceof  PythonComplex){
                     return new PythonBoolean(true);}
                 if(second instanceof PythonNumber){
                     return new PythonBoolean(getValue() != ((PythonNumber) second).getValue());}
                     break;
             case ">":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(bool, ">");
-                }
                 if(second instanceof  PythonComplex){
                     return new PythonBoolean(false);}
                 if(second instanceof PythonNumber){
                     return new PythonBoolean(getValue() > ((PythonNumber) second).getValue());}
                 break;
             case "<":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(bool, "<");
-                }
                 if(second instanceof  PythonComplex){
                     return new PythonBoolean(false);}
                 if(second instanceof PythonNumber){
                     return new PythonBoolean(getValue() < ((PythonNumber) second).getValue());}
                 break;
             case ">=":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(bool, ">=");
-                }
                 if(second instanceof  PythonComplex){
                     return new PythonBoolean(false);}
                 if(second instanceof PythonNumber){
                     return new PythonBoolean(getValue() >= ((PythonNumber) second).getValue());}
                 break;
             case "<=":
-                if(second instanceof PythonBoolean)
-                {
-                    PythonBoolean bool = (PythonBoolean) second;
-                    return compareTo(bool, "<=");
-                }
                 if(second instanceof  PythonComplex){
                     return new PythonBoolean(false);}
                 if(second instanceof PythonNumber){

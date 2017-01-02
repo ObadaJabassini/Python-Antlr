@@ -1,8 +1,10 @@
-package java.python.object;
+package python.object;
 
-import java.python.error.ExceptionManager;
-import java.python.error.UnsupportedException;
+import python.error.ExceptionManager;
+import python.error.UnsupportedException;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class PythonList extends PythonTraverse
 {
@@ -66,6 +68,24 @@ public class PythonList extends PythonTraverse
 
     @Override
     public PythonIterator iterator() {
-        return new PythonIterator(objects);
+        return new PythonListIterator(objects);
+    }
+    
+    public class PythonListIterator extends PythonIterator{
+    	
+    	private int i = 0;
+    	private List<PythonObject> objects;
+	
+	    public PythonListIterator(List<PythonObject> objects) {
+		    this.objects = objects;
+	    }
+	
+	    public boolean hasNext(){
+		    return i < objects.size();
+	    }
+	
+	    public PythonObject next(){
+		    return objects.get(i++);
+	    }
     }
 }
