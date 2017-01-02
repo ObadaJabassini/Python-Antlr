@@ -7,9 +7,52 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.*;
 
+//GUI
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JFileChooser;
+import java.io.File;
+
+
 public class Main
 {
+	//GUI
+	private JButton Compile;
+	private JPanel panel;
+	private JTextArea textArea1;
+	private JLabel CompiledOrNot;
+	private JLabel Output;
+	private JButton Load;
+	private JLabel Path;
+
     public static void main(String[] args) throws Exception {
+		/*GUI*/
+		try {
+			// Set System L&F
+			UIManager.setLookAndFeel(
+					UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (UnsupportedLookAndFeelException e) {
+			// handle exception
+		}
+		catch (ClassNotFoundException e) {
+			// handle exception
+		}
+		catch (InstantiationException e) {
+			// handle exception
+		}
+		catch (IllegalAccessException e) {
+			// handle exception
+		}
+
+		JFrame jFrame=new JFrame("start");
+		jFrame.setContentPane(new start().panel);
+		jFrame.pack();
+		jFrame.setVisible(true);
+		/*GUI*/
+
     	String path = "tests/test3.py";
 //        HelperParser helperParser = new HelperParser();
 //        AstPrinter astPrinter = new AstPrinter();
@@ -39,5 +82,30 @@ public class Main
 			throw new RuntimeException(e);
 		}
 		return sb.toString();
+	}
+
+	//GUI
+	public main() {
+		liseners();
+	}
+	private void liseners(){
+		Compile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+		Load.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+				int result = fileChooser.showOpenDialog(panel);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					Path.setText("Selected file: " + selectedFile.getAbsolutePath());
+				}
+			}
+		});
 	}
 }
