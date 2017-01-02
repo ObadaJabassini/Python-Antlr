@@ -19,7 +19,7 @@ public class AssignStatement extends Statement
 	public Object run() {
 		for (int i = 0; i < names.size(); i++) {
 			PythonObject res = (PythonObject) trees.get(i).run();
-			SymbolTable.getTable().addVariable(names.get(i), res, "local");
+			SymbolTable.addVariable(names.get(i), res, "local");
 		}
 		return this;
 	}

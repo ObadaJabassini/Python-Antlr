@@ -1,8 +1,7 @@
 package python.scope;
 
 import python.object.PythonObject;
-import python.error.ExceptionManager;
-import python.error.UndefinedException;
+import python.object.PythonRef;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +20,14 @@ public class GlobalScope extends Scope
 	
 	@Override
 	public PythonObject get(String name) {
-		if(!globalVariables.containsKey(name))
-		{
-			ExceptionManager.getManager().add(new UndefinedException(1,1, name, super.name));
-		}
-		return globalVariables.get(name);
+//		if(!globalVariables.containsKey(name))
+//		{
+//			ExceptionManager.getManager().add(new UndefinedException(1,1, name, super.name));
+//		}
+		PythonObject object = globalVariables.get(name);
+		if(object instanceof PythonRef)
+			return (PythonObject) object.run();
+		return object;
 	}
 	
 	@Override

@@ -21,14 +21,26 @@ public class IfStatement extends Statement
 	
 	@Override
 	public Object run() {
-		System.out.println(ifCond.run());
 		if(((PythonBoolean)ifCond.run()).getValue()) {
 			for (int i = 0; i < ifBody.getStatements().size(); i++) {
-				Object object = ifBody.getStatements().get(i);
-				if(object instanceof ReturnStatement )
-					return object;
-				object = ((Statement)object).run();
-				if(object instanceof LoopBreakType){
+				Object res = ifBody.getStatements().get(i);
+				if ( res instanceof ReturnStatement ) {
+					return res;
+				}
+				if ( res instanceof BreakStatement ) {
+					return new BreakStatement();
+				}
+				if ( res instanceof ContinueStatement ) {
+					break;
+				}
+				res = ((Statement) res).run();
+				if ( res instanceof ReturnStatement ) {
+					return res;
+				}
+				if ( res instanceof BreakStatement || res == LoopBreakType.BREAK) {
+					return new BreakStatement();
+				}
+				if ( res instanceof ContinueStatement || res == LoopBreakType.CONTINUE) {
 					break;
 				}
 			}
@@ -37,27 +49,51 @@ public class IfStatement extends Statement
 		for (int i = 0; i < elifCond.size(); i++) {
 			if(((PythonBoolean)elifCond.get(i).run()).getValue()){
 				for (int j = 0; j < elifBody.get(i).getStatements().size(); j++) {
-					Object object = elifBody.get(i).getStatements().get(j).run();
-					if(object instanceof ReturnStatement )
-						return object;
-					object = ((Statement)object).run();
-					if ( object == LoopBreakType.CONTINUE )
-						return new ContinueStatement();
-					if ( object == LoopBreakType.BREAK )
+					Object res = elifBody.get(i).getStatements().get(j);
+					if ( res instanceof ReturnStatement ) {
+						return res;
+					}
+					if ( res instanceof BreakStatement ) {
 						return new BreakStatement();
+					}
+					if ( res instanceof ContinueStatement ) {
+						break;
+					}
+					res = ((Statement) res).run();
+					if ( res instanceof ReturnStatement ) {
+						return res;
+					}
+					if ( res instanceof BreakStatement || res == LoopBreakType.BREAK) {
+						return new BreakStatement();
+					}
+					if ( res instanceof ContinueStatement || res == LoopBreakType.CONTINUE) {
+						break;
+					}
 				}
 			}
 		}
 		if(elseBody != null){
 			for (int i = 0; i < elseBody.getStatements().size(); i++) {
-				Object object = ifBody.getStatements().get(i);
-				if(object instanceof ReturnStatement )
-					return object;
-				object = ((Statement)object).run();
-				if ( object == LoopBreakType.CONTINUE )
-					return new ContinueStatement();
-				if ( object == LoopBreakType.BREAK )
+				Object res = elseBody.getStatements().get(i);
+				if ( res instanceof ReturnStatement ) {
+					return res;
+				}
+				if ( res instanceof BreakStatement ) {
 					return new BreakStatement();
+				}
+				if ( res instanceof ContinueStatement ) {
+					break;
+				}
+				res = ((Statement) res).run();
+				if ( res instanceof ReturnStatement ) {
+					return res;
+				}
+				if ( res instanceof BreakStatement || res == LoopBreakType.BREAK) {
+					return new BreakStatement();
+				}
+				if ( res instanceof ContinueStatement || res == LoopBreakType.CONTINUE) {
+					break;
+				}
 			}
 		}
 		return this;

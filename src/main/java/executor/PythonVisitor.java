@@ -233,12 +233,15 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitOr_test(@NotNull Python3Parser.Or_testContext ctx) {
 		if ( ctx.OR().size() == 0 ) {
-			Statement statement = visitAnd_test(ctx.and_test(0));
-			return statement;
+			return visitAnd_test(ctx.and_test(0));
 		}
 		BooleanTree tree = new BooleanTree("||");
 		for (int i = 0; i < ctx.OR().size(); i++) {
-			tree.addChild((BooleanTree) visitAnd_test(ctx.and_test(i)));
+			Statement statement = visitAnd_test(ctx.and_test(i));
+			if ( statement instanceof TestStatement )
+				tree.addChild(((TestStatement)statement).getTree());
+			else
+				tree.addChild((BooleanTree)statement);
 		}
 		return new TestStatement(tree);
 	}
@@ -323,7 +326,11 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		}
 		BooleanTree tree = new BooleanTree("&&");
 		for (int i = 0; i < ctx.AND().size(); i++) {
-			tree.addChild((BooleanTree) visitNot_test(ctx.not_test(i)));
+			Statement statement = visitNot_test(ctx.not_test(i));
+			if ( statement instanceof TestStatement )
+				tree.addChild(((TestStatement)statement).getTree());
+			else
+				tree.addChild((BooleanTree)statement);
 		}
 		return new TestStatement(tree);
 	}
@@ -469,8 +476,10 @@ public class PythonVisitor implements Python3Visitor<Statement>
 			return visitTerm(ctx.term(0));
 		}
 		ExpressionTree tree = new ExpressionTree(ctx.opss.get(0).getText());
-		tree.addChild((ExpressionTree) visitTerm(ctx.term(0)));
-		tree.addChild((ExpressionTree) visitTerm(ctx.term(1)));
+		ExpressionTree tt = (ExpressionTree) visitTerm(ctx.term(0));
+		tree.addChild(tt);
+		tt = (ExpressionTree) visitTerm(ctx.term(1));
+		tree.addChild(tt);
 		for (int i = 1; i < ctx.opss.size(); i++) {
 			ExpressionTree tree1 = new ExpressionTree(ctx.opss.get(i).getText());
 			tree1.addChild((ExpressionTree) visitTerm(ctx.term(i + 1)));
@@ -552,7 +561,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 			ArgumentListStatement argumentListStatement = (ArgumentListStatement) visitTrailer(ctx.trailer().get(0));
 			tree.setRoot(node);
 			function.setParameters(argumentListStatement);
-			SymbolTable.getTable().beginScope(ctx.atom().getText(), SymbolTable.ScopeType.FUNCTION);
+			SymbolTable.beginScope(ctx.atom().getText(), SymbolTable.ScopeType.FUNCTION);
 			return tree;
 		}
 		return visitAtom(ctx.atom());
@@ -718,10 +727,18 @@ public class PythonVisitor implements Python3Visitor<Statement>
 			return tree;
 		}
 		if ( ctx.NONE() != null ) {
-			return Python.none();
+			ExpressionTree tree = new ExpressionTree(null);
+			ExpressionTree.Node node = new ExpressionTree.Node();
+			node.object = Python.none();
+			tree.setRoot(node);
+			return tree;
 		}
 		if ( ctx.NAME() != null ) {
-			return SymbolTable.getTable().lookup(ctx.NAME().getText());
+			ExpressionTree tree = new ExpressionTree(null);
+			ExpressionTree.Node node = new ExpressionTree.Node();
+			node.object = new PythonRef(ctx.NAME().getText());
+			tree.setRoot(node);
+			return tree;
 		}
 		if ( ctx.number() != null ) {
 			return visitNumber(ctx.number());

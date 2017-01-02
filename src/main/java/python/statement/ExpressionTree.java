@@ -20,6 +20,10 @@ public class ExpressionTree extends Statement
 		List<Node> children = new ArrayList<>();
 	}
 	
+	public Node getRot() {
+		return rot;
+	}
+	
 	public ExpressionTree(String op){
 		this.rot.op = op;
 	}
@@ -37,7 +41,7 @@ public class ExpressionTree extends Statement
 	}
 	
 	private PythonObject eval(Node node){
-		if(node.op == null && node.children.isEmpty()){
+		if(node.op == null){
 			return node.object.apply(node.speical);
 		}
 		if(node.children.size() == 1){

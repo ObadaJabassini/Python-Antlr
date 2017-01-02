@@ -20,7 +20,7 @@ public class AugAssignStatement extends Statement
 	@Override
 	public Object run() {
 		for (int i = 0; i < names.size(); i++) {
-			SymbolTable.getTable().addVariable(names.get(i), SymbolTable.getTable().lookup(names.get(i)).apply((PythonObject) trees.get(i).run(), getOp(op)), "local");
+			SymbolTable.addVariable(names.get(i), SymbolTable.lookup(names.get(i)).apply((PythonObject) trees.get(i).run(), getOp(op)), "local");
 		}
 		return this;
 	}

@@ -8,22 +8,17 @@ import java.util.List;
 public class SymbolTable
 {
 	public enum ScopeType{FUNCTION, CLASS}
-	private Scope currentScope = new GlobalScope();
-	private static final SymbolTable table = new SymbolTable();
-	private List<String> toGlobal = new ArrayList<>();
+	private static Scope currentScope = new GlobalScope();
+	private static List<String> toGlobal = new ArrayList<>();
 	private SymbolTable(){
 		
 	}
 	
-	public static SymbolTable getTable(){
-		return table;
+	public static void toGlobal(String name){
+		toGlobal.add(name);
 	}
 	
-	public void toGlobal(String name){
-		this.toGlobal.add(name);
-	}
-	
-	public void beginScope(String name, ScopeType type){
+	public static void beginScope(String name, ScopeType type){
 		Scope temp = currentScope;
 		switch (type){
 			case FUNCTION:
@@ -33,19 +28,19 @@ public class SymbolTable
 		}
 	}
 	
-	public void endScope(){
+	public static void endScope(){
 		currentScope = currentScope.getParent();
 		toGlobal.clear();
 	}
 	
-	public PythonObject lookup(String name){
+	public static PythonObject lookup(String name){
 		return currentScope.get(name);
 	}
 	
-	public void removeVariable(String name) {
+	public static void removeVariable(String name) {
 		currentScope.remove(name);
 	}
-	public void addVariable(String name, PythonObject object, Object... params){
+	public static void addVariable(String name, PythonObject object, Object... params){
 		if(currentScope instanceof GlobalScope || toGlobal.contains(name)){
 			((GlobalScope) currentScope).setGlobalVariable(name, object);
 		}

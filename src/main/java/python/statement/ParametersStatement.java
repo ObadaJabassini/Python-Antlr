@@ -18,7 +18,7 @@ public class ParametersStatement extends Statement
 	}
 	@Override
 	public Object run() {
-		params.forEach((s, object) -> SymbolTable.getTable().addVariable(s, (PythonObject) object.run(), "parameter"));
+		params.forEach((s, object) -> SymbolTable.addVariable(s, (PythonObject) object.run(), "parameter"));
 		return params;
 	}
 	

@@ -16,24 +16,29 @@ public class WhileStatement extends Statement
 	
 	@Override
 	public Object run() {
-		boolean isFinished = false;
 		List<Statement> statements = body.getStatements();
 		while (((PythonBoolean) conditionStatement.run()).getValue()) {
-			for (int i = 0; i < statements.size() && !isFinished; i++) {
-				Object res = statements.get(i);
+			for (Statement statement : statements) {
+				Object res = statement;
 				if ( res instanceof ReturnStatement ) {
 					return res;
 				}
-				res = ((Statement)res).run();
-				if ( res == LoopBreakType.BREAK ) {
-					isFinished = true;
+				if ( res instanceof BreakStatement ) {
+					return new BreakStatement();
 				}
-				else if ( res == LoopBreakType.CONTINUE ) {
+				if ( res instanceof ContinueStatement ) {
 					break;
 				}
-			}
-			if ( isFinished ) {
-				break;
+				res = ((Statement) res).run();
+				if ( res instanceof ReturnStatement ) {
+					return res;
+				}
+				if ( res instanceof BreakStatement || res == LoopBreakType.BREAK) {
+					return new BreakStatement();
+				}
+				if ( res instanceof ContinueStatement || res == LoopBreakType.CONTINUE) {
+					break;
+				}
 			}
 		}
 		return this;

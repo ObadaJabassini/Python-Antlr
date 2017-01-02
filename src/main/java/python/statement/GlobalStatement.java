@@ -14,7 +14,7 @@ public class GlobalStatement extends Statement
 	
 	@Override
 	public Object run() {
-		this.vars.forEach(var -> SymbolTable.getTable().toGlobal(var));
+		this.vars.forEach(var -> SymbolTable.toGlobal(var));
 		return this;
 	}
 }

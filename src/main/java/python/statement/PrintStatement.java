@@ -7,7 +7,7 @@ public class PrintStatement extends Statement
 	private String name;
 	@Override
 	public Object run() {
-		System.out.println(SymbolTable.getTable().lookup(name));
+		System.out.println(SymbolTable.lookup(name));
 		return this;
 	}
 	

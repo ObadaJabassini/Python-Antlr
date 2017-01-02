@@ -10,14 +10,13 @@ public class PythonObject extends Statement implements python.object.PythonOpera
 	
 	@Override
 	public Object run() {
-		return null;
+		return this;
 	}
 	
 	@Override
 	public int hashCode() {
 		return Objects.hash(clz);
 	}
-	
 	
 	@Override
 	public PythonObject apply(PythonObject second, String op) {

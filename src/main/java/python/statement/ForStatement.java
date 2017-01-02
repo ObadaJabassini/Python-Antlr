@@ -28,7 +28,7 @@ public class ForStatement extends Statement
 		boolean finished = false;
 		while (iterator.hasNext() && !finished) {
 			for (int i = 0; i < names.size(); i++) {
-				SymbolTable.getTable().addVariable(names.get(i), iterators.get(i).next(), "local");
+				SymbolTable.addVariable(names.get(i), iterators.get(i).next(), "local");
 			}
 			for (int j = 0; j < block.getStatements().size(); j++) {
 				Object object = block.getStatements().get(j);

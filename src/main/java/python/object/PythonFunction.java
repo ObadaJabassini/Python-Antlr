@@ -21,16 +21,16 @@ public class PythonFunction extends python.object.PythonObject
 		for (int i = 0; i < body.getStatements().size(); i++) {
 			Object object = body.getStatements().get(i);
 			if(object instanceof ReturnStatement ) {
-				SymbolTable.getTable().endScope();
+				SymbolTable.endScope();
 				return (python.object.PythonObject) ((ReturnStatement) object).run();
 			}
 			object = ((Statement)object).run();
 			if(object instanceof ReturnStatement){
-				SymbolTable.getTable().endScope();
+				SymbolTable.endScope();
 				return (python.object.PythonObject) ((ReturnStatement) object).run();
 			}
 		}
-		SymbolTable.getTable().endScope();
+		SymbolTable.endScope();
 		return Python.none();
 	}
 	
