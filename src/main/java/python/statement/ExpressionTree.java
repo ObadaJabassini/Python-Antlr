@@ -14,7 +14,7 @@ public class ExpressionTree extends Statement
 	}
 	
 	public static class Node{
-		public String speical = "+";
+		public String speical;
 		public String op;
 		public PythonObject object;
 		List<Node> children = new ArrayList<>();
@@ -42,12 +42,20 @@ public class ExpressionTree extends Statement
 	
 	private PythonObject eval(Node node){
 		if(node.op == null){
-			return node.object.apply(node.speical);
+			if(node.speical != null)
+				return ((PythonObject)node.object.run()).apply(node.speical);
+			return ((PythonObject)node.object.run());
 		}
 		if(node.children.size() == 1){
-			return eval(node.children.get(0)).apply(node.speical);
+			PythonObject object = eval(node.children.get(0));
+			if ( node.speical == null )
+				return ((PythonObject)object.run());
+			return ((PythonObject)object.run()).apply(node.speical);
 		}
-		return node.children.stream().map(this::eval).reduce((f, s) -> f.apply(s, node.op)).get().apply(node.speical);
+		PythonObject object = node.children.stream().map(this::eval).reduce((f, s) -> f.apply((PythonObject) s.run(), node.op)).get();
+		if ( node.speical == null )
+			return ((PythonObject)object.run());
+		return ((PythonObject)object.run()).apply(node.speical);
 	}
 	
 	@Override

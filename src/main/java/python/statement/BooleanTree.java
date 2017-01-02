@@ -46,8 +46,7 @@ public class BooleanTree extends ExpressionTree
 			return (PythonObject) node.statement.run();
 		if( node.children.size() == 1)
 			return eval(node.children.get(0));
-		System.out.println(node.op);
-		return node.children.stream().map(this::eval).reduce((f, s) -> f.apply(s, node.op)).get();
+		return node.children.stream().map(this::eval).reduce((f, s) -> f.apply((PythonObject) s.run(), node.op)).get();
 	}
 	
 	@Override

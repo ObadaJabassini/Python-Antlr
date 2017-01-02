@@ -21,13 +21,15 @@ public class ComparisonStatement extends Statement
 	
 	@Override
 	public Object run() {
-		if(trees.size() == 1)
-			return ((PythonObject)trees.get(0).run()).apply(not?"!":"");
+		if(trees.size() == 1) {
+			PythonObject temp = (PythonObject) ((PythonObject)trees.get(0).run()).run();
+			return temp.apply(not ? "!" : "").run();
+		}
 		PythonObject object = ((PythonObject)trees.get(0).run()).apply((PythonObject)trees.get(1).run(), ops.get(0));
 		for (int i = 1; i < ops.size(); i++) {
-			object = object.apply((PythonObject) trees.get(i + 1).run(), ops.get(i));
+			object = ((PythonObject)object.run()).apply((PythonObject) trees.get(i + 1).run(), ops.get(i));
 		}
-		return object.apply(not?"!":"");
+		return ((PythonObject)object.run()).apply(not?"!":"").run();
 	}
 	
 	@Override

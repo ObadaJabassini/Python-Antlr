@@ -66,3 +66,11 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
 )
+
+
+
+x=0
+y=2
+while y > x and False:
+    x=x+1
+    break

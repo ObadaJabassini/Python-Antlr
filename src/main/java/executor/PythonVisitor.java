@@ -235,13 +235,13 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		if ( ctx.OR().size() == 0 ) {
 			return visitAnd_test(ctx.and_test(0));
 		}
-		BooleanTree tree = new BooleanTree("||");
-		for (int i = 0; i < ctx.OR().size(); i++) {
+		BooleanTree tree = new BooleanTree("or");
+		for (int i = 0; i < ctx.and_test().size(); i++) {
 			Statement statement = visitAnd_test(ctx.and_test(i));
 			if ( statement instanceof TestStatement )
 				tree.addChild(((TestStatement)statement).getTree());
 			else
-				tree.addChild((BooleanTree)statement);
+				tree.addChild((ExpressionTree) statement);
 		}
 		return new TestStatement(tree);
 	}
@@ -269,8 +269,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTest(@NotNull Python3Parser.TestContext ctx) {
-		Statement statement = visitOr_test(ctx.or_test(0));
-		return statement;
+		return visitOr_test(ctx.or_test(0));
 	}
 	
 	@Override
@@ -324,13 +323,14 @@ public class PythonVisitor implements Python3Visitor<Statement>
 		if ( ctx.AND().size() == 0 ) {
 			return visitNot_test(ctx.not_test(0));
 		}
-		BooleanTree tree = new BooleanTree("&&");
-		for (int i = 0; i < ctx.AND().size(); i++) {
+		BooleanTree tree = new BooleanTree("and");
+		for (int i = 0; i < ctx.not_test().size(); i++) {
 			Statement statement = visitNot_test(ctx.not_test(i));
 			if ( statement instanceof TestStatement )
 				tree.addChild(((TestStatement)statement).getTree());
-			else
-				tree.addChild((BooleanTree)statement);
+			else {
+				tree.addChild((ExpressionTree) statement);
+			}
 		}
 		return new TestStatement(tree);
 	}
@@ -376,7 +376,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitParameters(@NotNull Python3Parser.ParametersContext ctx) {
-		if ( ctx.typedargslist() != null ) {
+		if ( ctx.getText().equals("()") ) {
 			return new ParametersStatement(new LinkedHashMap<>());
 		}
 		return visitTypedargslist(ctx.typedargslist());
@@ -462,6 +462,8 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTrailer(@NotNull Python3Parser.TrailerContext ctx) {
+		if(ctx.getText().equals("()"))
+			return new ArgumentListStatement(new ArrayList<>());
 		return visitArglist(ctx.arglist());
 	}
 	
@@ -509,7 +511,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTypedargslist(@NotNull Python3Parser.TypedargslistContext ctx) {
-		Map<String, ExpressionTree> map = new HashMap<>();
+		Map<String, ExpressionTree> map = new LinkedHashMap<>();
 		if ( ctx.test(0) != null ) {
 			map.put(ctx.tfpdef(0).NAME().getText(), (ExpressionTree) visitTest(ctx.test(0)));
 		}
@@ -553,7 +555,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitPower(@NotNull Python3Parser.PowerContext ctx) {
-		if ( ctx.trailer().size() != 0 ) {
+		if ( ctx.trailer() != null && ctx.trailer().size() > 0) {
 			ExpressionTree tree = new ExpressionTree(null);
 			ExpressionTree.Node node = new ExpressionTree.Node();
 			PythonFunction function = functions.get(ctx.atom().getText());
@@ -604,8 +606,7 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitTest_nocond(@NotNull Python3Parser.Test_nocondContext ctx) {
-		Statement statement = visitOr_test(ctx.or_test());
-		return statement;
+		return visitOr_test(ctx.or_test());
 	}
 	
 	@Override
@@ -650,6 +651,9 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	
 	@Override
 	public Statement visitExpr_stmt(@NotNull Python3Parser.Expr_stmtContext ctx) {
+		if(ctx.augassign() == null && ctx.testlist_star_expr(1) == null && ctx.yield_expr(1) == null){
+			return visitTestlist_star_expr(ctx.testlist_star_expr(0));
+		}
 		List<String> names = new ArrayList<>(Arrays.asList(ctx.testlist_star_expr(0).getText().split(",")));
 		TestListStatement statement = (TestListStatement) visitTestlist_star_expr(ctx.testlist_star_expr(1));
 		if ( ctx.augassign() == null ) {
@@ -688,7 +692,9 @@ public class PythonVisitor implements Python3Visitor<Statement>
 	@Override
 	public Statement visitTestlist_star_expr(@NotNull Python3Parser.Testlist_star_exprContext ctx) {
 		List<ExpressionTree> trees = new ArrayList<>();
-		ctx.test().forEach(testContext -> trees.add((ExpressionTree) visitTest(testContext)));
+		for(Python3Parser.TestContext testContext : ctx.test()){
+			trees.add((ExpressionTree) visitTest(testContext));
+		}
 		return new TestListStatement(trees);
 	}
 	

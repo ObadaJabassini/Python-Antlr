@@ -172,7 +172,7 @@ public class PythonInteger extends python.object.PythonNumber
 				if(second instanceof python.object.PythonNumber )
 					return new PythonBoolean(getValue() != ((python.object.PythonNumber) second).getValue());
 			case ">":
-				if(second instanceof  PythonComplex)
+				if(second instanceof  PythonComplex )
 					return new PythonBoolean(false);
 				if(second instanceof python.object.PythonNumber )
 					return new PythonBoolean(getValue() > ((python.object.PythonNumber) second).getValue());

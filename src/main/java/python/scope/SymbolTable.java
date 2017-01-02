@@ -41,8 +41,16 @@ public class SymbolTable
 		currentScope.remove(name);
 	}
 	public static void addVariable(String name, PythonObject object, Object... params){
-		if(currentScope instanceof GlobalScope || toGlobal.contains(name)){
+		if(currentScope instanceof GlobalScope){
 			((GlobalScope) currentScope).setGlobalVariable(name, object);
+		}
+		if ( toGlobal.contains(name) ){
+			Scope temp = currentScope.parent;
+			while (temp.parent!=null)
+				temp = temp.parent;
+			((GlobalScope)temp).setGlobalVariable(name, object);
+			System.out.println(temp);
+			return;
 		}
 		if ( currentScope instanceof FunctionScope ){
 			String type = (String) params[0];
@@ -50,6 +58,7 @@ public class SymbolTable
 				((FunctionScope) currentScope).setLocal(name, object);
 			else
 				((FunctionScope) currentScope).setParameter(name, object);
+			return;
 		}
 		System.out.println(currentScope);
 	}

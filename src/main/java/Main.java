@@ -4,12 +4,16 @@ import executor.PythonVisitor;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.gui.TreeViewer;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main
 {
     public static void main(String[] args) throws Exception {
+	    //InputStream is = new ByteArrayInputStream( myString.getBytes( charset ) );
     	String path = "tests/test3.py";
 //        HelperParser helperParser = new HelperParser();
 //        AstPrinter astPrinter = new AstPrinter();
@@ -22,9 +26,9 @@ public class Main
 	    PythonVisitor pythonVisitor = new PythonVisitor();
 	    System.out.println(tree.toStringTree(parser));
 	    pythonVisitor.visit(tree).run();
-//	    final List<String> ruleNames = Arrays.asList(Python3Parser.ruleNames);
-//	    final TreeViewer view = new TreeViewer(ruleNames, tree);
-//	    view.open();
+	    final List<String> ruleNames = Arrays.asList(Python3Parser.ruleNames);
+	    final TreeViewer view = new TreeViewer(ruleNames, tree);
+	    view.open();
     }
 	
 	private static String readStream(InputStream is) {
